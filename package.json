@@ -3,24 +3,35 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
-    "build": "nx build",
-    "test": "nx test"
+    "start": "nx run-many --all --target=serve --parallel",
+    "build": "nx run-many --target=build --all",
+    "test": "nx run-many --all --target=test --parallel",
+    "lint": "nx workspace-lint && npx nx run-many --all --target=lint --parallel"
   },
   "private": true,
   "dependencies": {
+    "@nestjs/common": "^7.0.0",
+    "@nestjs/core": "^7.0.0",
+    "@nestjs/platform-express": "^7.0.0",
     "core-js": "^3.6.5",
+    "nx": "^12.10.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "0.13.7",
+    "rxjs": "~6.6.3",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
+    "@nestjs/schematics": "^7.0.0",
+    "@nestjs/testing": "^7.0.0",
     "@nrwl/cli": "12.10.0",
     "@nrwl/cypress": "12.10.0",
     "@nrwl/eslint-plugin-nx": "12.10.0",
     "@nrwl/jest": "12.10.0",
     "@nrwl/linter": "12.10.0",
+    "@nrwl/nest": "^12.10.0",
+    "@nrwl/node": "12.10.0",
     "@nrwl/react": "12.10.0",
     "@nrwl/tao": "12.10.0",
     "@nrwl/web": "12.10.0",
