@@ -1,19 +1,22 @@
 {
-  "name": "blogs",
+  "name": "blog-app-nx",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "start": "nx run-many --all --target=serve --parallel",
     "build": "nx run-many --target=build --all",
     "test": "nx run-many --all --target=test --parallel",
-    "lint": "nx workspace-lint && npx nx run-many --all --target=lint --parallel"
+    "lint": "nx workspace-lint && npx nx run-many --all --target=lint --parallel",
+    "image:builder": "docker build -t blog-app-nx:base ."
   },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
+    "@nestjs/mongoose": "^9.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "core-js": "^3.6.5",
+    "mongoose": "^6.0.10",
     "nx": "^12.10.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
