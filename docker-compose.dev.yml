@@ -1,0 +1,65 @@
+version: '3.8'
+
+networks:
+  corp:
+    driver: bridge
+
+services:
+  backend:
+    container_name: backend-dev
+    build:
+      context: ./
+      cache_from:
+        - blog-app-nx:base
+      dockerfile: ./apps/backend/Dockerfile.dev
+    image: backend:dev
+    command: npx nx serve backend
+    ports:
+      - ${API_PORT:-4201}:3333
+    volumes:
+      - ./apps/backend:/app/builder/apps/backend
+    env_file: ./apps/backend/.env.local
+    environment:
+      PORT: ${PORT:-3333}
+      NODE_ENV: ${NODE_ENV}
+      MONGODB_HOST: mongo
+    depends_on:
+      - mongo
+    networks:
+      - corp
+    restart: on-failure
+
+  frontend:
+    container_name: frontend-dev
+    build:
+      context: ./
+      dockerfile: ./apps/frontend/Dockerfile.dev
+    command: npx nx run frontend:serve-docker
+    image: frontend:dev
+    ports:
+      - ${APP_PORT:-4200}:4200
+    volumes:
+      - ./apps/frontend:/app/builder/apps/frontend
+      - ./dist/apps/frontend:/app/builder/dist/apps/frontend
+    environment:
+      PORT: ${PORT:-4200}
+      NODE_ENV: ${NODE_ENV}
+    env_file:
+      - ./apps/frontend/.env.local
+    depends_on:
+      - backend
+    networks:
+      - corp
+    restart: on-failure
+
+  mongo:
+    image: mongo
+    container_name: database
+    env_file: ./apps/backend/.env.local
+    ports:
+      - 27017:27017
+    volumes:
+      - ./database:/data/db
+    networks:
+      - corp
+    restart: on-failure
