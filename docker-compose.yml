@@ -21,6 +21,11 @@ services:
     environment:
       NODE_ENV: 'development'
       PORT: 4939
+      MONGODB_ADMINUSERNAME: root
+      MONGODB_ADMINPASSWORD: example
+      MONGODB_URL: mongodb://root:example@mongo:27017/
+    depends_on:
+      - mongo
     networks:
       - corp
     restart: on-failure
@@ -41,6 +46,22 @@ services:
     environment:
       NODE_ENV: 'development'
       PORT: 4900
+    depends_on:
+      - backend
+    networks:
+      - corp
+    restart: on-failure
+
+  mongo:
+    image: mongo
+    container_name: database
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    volumes:
+      - ./database:/data/db
     networks:
       - corp
     restart: on-failure
