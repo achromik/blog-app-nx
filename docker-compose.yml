@@ -14,8 +14,8 @@ services:
         NODE_ENV: 'production'
         BUILD_FLAG: ''
     image: backend:prod
-    ports:
-      - 3333:3333
+    # ports:
+    #   - 5000:5000
     environment:
       NODE_ENV: 'production'
       PORT: 3333

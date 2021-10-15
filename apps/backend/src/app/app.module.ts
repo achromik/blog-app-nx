@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BlogModule } from '../blog/blog.module';
-
-const mongoURL = `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/`;
 
 @Module({
   imports: [
@@ -14,8 +12,21 @@ const mongoURL = `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGOD
       envFilePath:
         process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
     }),
-    MongooseModule.forRoot(mongoURL, {
-      useNewUrlParser: true,
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        uri:
+          config.get<string>('MONGODB_URL') ||
+          `mongodb://${config.get<string>(
+            'MONGODB_USERNAME'
+          )}:${config.get<string>('MONGODB_PASSWORD')}@${config.get<string>(
+            'MONGODB_HOST',
+            'localhost'
+          )}:${config.get<number>('MONGODB_PORT', 27017)}/`,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }),
+      inject: [ConfigService],
     }),
     BlogModule,
   ],

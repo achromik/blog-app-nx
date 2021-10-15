@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://backend:3333",
+    "target": "http://backend:5000",
     "secure": false
   }
 }
