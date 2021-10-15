@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BlogModule } from '../blog/blog.module';
 
 const mongoURL = `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/`;
 
@@ -16,6 +17,7 @@ const mongoURL = `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGOD
     MongooseModule.forRoot(mongoURL, {
       useNewUrlParser: true,
     }),
+    BlogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
