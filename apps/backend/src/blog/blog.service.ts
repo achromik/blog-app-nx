@@ -16,11 +16,11 @@ export class BlogService {
   }
 
   async getPost(postID: string): Promise<Post> {
-    return await this.postModel.findById(postID).exec();
+    return await this.postModel.findById(postID);
   }
 
   async getPosts(): Promise<Post[]> {
-    return await this.postModel.find().exec();
+    return await this.postModel.find();
   }
 
   async editPost(postID: string, createPostDTO: CreatePostDTO): Promise<Post> {

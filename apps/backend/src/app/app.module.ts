@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BlogModule } from '../blog/blog.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -25,10 +26,12 @@ import { BlogModule } from '../blog/blog.module';
           )}:${config.get<number>('MONGODB_PORT', 27017)}/`,
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        useCreateIndex: true,
       }),
       inject: [ConfigService],
     }),
     BlogModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
