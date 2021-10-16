@@ -8,7 +8,9 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { ValidateObjectID } from '../shared/pipes/validate-object-id.pipe';
 import { BlogService } from './blog.service';
@@ -22,7 +24,7 @@ interface BlogPostResponse {
 
 @Controller('blog')
 export class BlogController {
-  constructor(private blogService: BlogService) {}
+  constructor(private readonly blogService: BlogService) {}
 
   @Get('post/:postID')
   async getPost(
@@ -42,6 +44,7 @@ export class BlogController {
     return await this.blogService.getPosts();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('post')
   async addPost(
     @Body() createPostDTO: CreatePostDTO
@@ -54,6 +57,7 @@ export class BlogController {
     };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Put('edit')
   async editPost(
     @Query('postID', new ValidateObjectID()) postID: string,
@@ -71,6 +75,7 @@ export class BlogController {
     };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete('delete')
   async deletePost(
     @Query('postID', new ValidateObjectID()) postID: string
