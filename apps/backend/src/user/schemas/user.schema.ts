@@ -2,19 +2,27 @@ import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../interfaces/user.interface';
 
-export const UserSchema = new mongoose.Schema<User>({
-  email: {
-    type: String,
-    unique: true,
-    require: true,
+export const UserSchema = new mongoose.Schema<User>(
+  {
+    email: {
+      type: String,
+      unique: true,
+      require: true,
+    },
+    password: {
+      type: String,
+      require: true,
+    },
+    firstName: String,
+    lastName: String,
   },
-  password: {
-    type: String,
-    require: true,
-  },
-  firstName: String,
-  lastName: String,
-});
+  {
+    timestamps: {
+      createdAt: true,
+      updatedAt: false,
+    },
+  }
+);
 
 UserSchema.pre('save', function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
