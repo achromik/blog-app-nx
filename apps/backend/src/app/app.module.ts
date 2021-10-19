@@ -9,6 +9,7 @@ import { UserModule } from '../user/user.module';
 import { MongoConfigService } from '../config/database/mongo/configuration.service';
 import { MongoConfigModule } from '../config/database/mongo/configuration.module';
 import { AppConfigModule } from '../config/app/configuration.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AppConfigModule } from '../config/app/configuration.module';
     BlogModule,
     UserModule,
     AppConfigModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

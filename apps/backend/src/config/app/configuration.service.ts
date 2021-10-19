@@ -12,4 +12,12 @@ export class AppConfigService {
   get globalPrefix(): string {
     return this.configService.get<string>('app.globalPrefix');
   }
+
+  get secretKey(): string {
+    return this.configService.get<string>('app.secretKey');
+  }
+
+  get jwtTTL(): number {
+    return this.configService.get<number>('app.jwtTTL');
+  }
 }
