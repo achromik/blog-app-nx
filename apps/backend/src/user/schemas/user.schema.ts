@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+
 import * as bcrypt from 'bcryptjs';
 import { User } from '../interfaces/user.interface';
 
@@ -52,10 +53,7 @@ UserSchema.methods.checkPassword = function (
   attempt: string,
   callback: <T extends unknown[], R = unknown>(...args: T) => R
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
-
-  bcrypt.compare(attempt, user.password, (err, isMatch: boolean) => {
+  bcrypt.compare(attempt, this.password, (err, isMatch: boolean) => {
     if (err) {
       return callback(err);
     }

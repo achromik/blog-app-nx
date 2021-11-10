@@ -8,9 +8,13 @@ import {
   Post,
   Put,
   Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { ValidateObjectID } from '../shared/pipes/validate-object-id.pipe';
+import { UserFromJWT } from '../user/interfaces/user-from-jwt.interface';
 import { BlogService } from './blog.service';
 import { CreatePostDTO } from './dto/create-post.dto';
 import { Post as BlogPost } from './interfaces/post.interface';
@@ -42,11 +46,16 @@ export class BlogController {
     return await this.blogService.getPosts();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('post')
   async addPost(
+    @Request() req: { user: UserFromJWT },
     @Body() createPostDTO: CreatePostDTO
   ): Promise<BlogPostResponse> {
-    const newPost = await this.blogService.addPost(createPostDTO);
+    const newPost = await this.blogService.addPost({
+      ...createPostDTO,
+      author: req.user.userId,
+    });
 
     return {
       message: 'Post has been added successfully!',
