@@ -7,6 +7,8 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import { LoginUserResponse } from '@libs/types';
+
 import { User } from '../user/interfaces/user.interface';
 
 import { AuthService } from './auth.service';
@@ -16,11 +18,6 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 interface RegisterUserResponse {
   message: string;
   user: User;
-}
-
-interface LoginUserResponse {
-  message: string;
-  access_token: string;
 }
 
 @Controller('auth')

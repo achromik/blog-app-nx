@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@blogs/types": ["libs/types/src/index.ts"]
+      "@libs/types": ["libs/types/src/index.ts"],
+      "utils/http": ["apps/frontend/src/app/utils/http.ts"],
+      "config": ["apps/frontend/src/app/config/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
