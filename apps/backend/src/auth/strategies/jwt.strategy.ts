@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { AppConfigService } from '../../config/app/configuration.service';
-import { UserFromJWT } from '../../user/interfaces/user-from-jwt.interface';
+import { UserFromJWT } from '../../user/interfaces/userFromJWT.interface';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()

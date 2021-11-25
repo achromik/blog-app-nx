@@ -14,7 +14,7 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { ValidateObjectID } from '../shared/pipes/validate-object-id.pipe';
-import { UserFromJWT } from '../user/interfaces/user-from-jwt.interface';
+import { UserFromJWT } from '../user/interfaces/userFromJWT.interface';
 import { BlogService } from './blog.service';
 import { CreatePostDTO } from './dto/create-post.dto';
 import { Post as BlogPost } from './interfaces/post.interface';

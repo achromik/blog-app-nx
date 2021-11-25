@@ -3,4 +3,6 @@ export interface AppConfig {
   globalPrefix: string;
   secretKey: string;
   jwtTTL: number;
+  refreshTokenSecretKey: string;
+  refreshTokenTTL: number;
 }

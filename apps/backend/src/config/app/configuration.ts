@@ -9,5 +9,7 @@ export default registerAs<AppConfig>(
     globalPrefix: getEnvString('API_GLOBAL_PREFIX', 'api'),
     secretKey: getEnvString('JWT_SECRET_KEY'),
     jwtTTL: getEnvNumber('JWT_TTL', 60),
+    refreshTokenSecretKey: getEnvString('JWT_REFRESH_TOKEN_SECRET_KEY'),
+    refreshTokenTTL: getEnvNumber('JWT_REFRESH_TOKEN_TTL', 120),
   })
 );

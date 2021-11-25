@@ -7,22 +7,28 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { LoginUserResponse } from '@libs/types';
+import {
+  AuthenticationPayload,
+  AuthResponse,
+  RegisterUserResponse,
+} from '@libs/types';
 
-import { User } from '../user/interfaces/user.interface';
+import { UserDocument } from '../user/interfaces/user.interface';
 
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register-user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-
-interface RegisterUserResponse {
-  message: string;
-  user: User;
-}
+import { RequestWithUser } from './interfaces/requestWithUser.interface';
+import { UserService } from '../user/user.service';
+import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
+import { RequestWithUserID } from './interfaces/requestWithUserId.interface';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService
+  ) {}
 
   @Post('register')
   async createUser(
@@ -32,8 +38,8 @@ export class AuthController {
       const newUser = await this.authService.register(createUserDTO);
 
       return {
-        message: 'User has been registered successfully!',
-        user: newUser,
+        status: 'success',
+        data: { user: newUser },
       };
     } catch (err) {
       if (err.name === 'MongoError' && err?.code === 11000) {
@@ -45,10 +51,52 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req): Promise<LoginUserResponse> {
+  async login(@Request() req: RequestWithUser): Promise<AuthResponse> {
+    const { user } = req;
+    const { refreshToken, jwtId } = this.authService.getRefreshToken(user._id);
+    const accessToken = this.authService.getAccessToken(user);
+
+    await this.userService.setRefreshToken(user._id, jwtId);
+
+    const payload = this.buildResponsePayload(user, accessToken, refreshToken);
+
     return {
-      ...(await this.authService.login(req.user)),
-      message: 'User has been logged successfully!',
+      status: 'success',
+      data: payload,
+    };
+  }
+
+  @UseGuards(RefreshTokenAuthGuard)
+  @Post('refresh')
+  async refresh(@Request() req: RequestWithUserID): Promise<AuthResponse> {
+    const { userId } = req.user;
+
+    const user = await this.userService.getById(userId);
+
+    const accessToken = this.authService.getAccessToken(user);
+    const { refreshToken, jwtId } = this.authService.getRefreshToken(userId);
+
+    await this.userService.setRefreshToken(userId, jwtId);
+
+    const payload = this.buildResponsePayload(user, accessToken, refreshToken);
+
+    return {
+      status: 'success',
+      data: payload,
+    };
+  }
+
+  private buildResponsePayload(
+    user: UserDocument,
+    accessToken: string,
+    refreshToken?: string
+  ): AuthenticationPayload {
+    return {
+      user: user,
+      payload: {
+        accessToken,
+        refreshToken,
+      },
     };
   }
 }

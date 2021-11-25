@@ -1,43 +1,55 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { v4 as uuidv4 } from 'uuid';
 
-import { sanitize } from '../shared/utils/sanitize';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
-import { User } from '../user/interfaces/user.interface';
+import { UserDocument } from '../user/interfaces/user.interface';
 import { UserService } from '../user/user.service';
+import { AppConfigService } from '../config/app/configuration.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly configService: AppConfigService
   ) {}
 
-  sanitize(user: User): User {
-    return sanitize<User>(user, ['password', '_id']);
+  async register(createUserDTO: CreateUserDTO) {
+    const user = await this.userService.create(createUserDTO);
+
+    return user;
   }
 
-  async register(createUserDTO: CreateUserDTO): Promise<User> {
-    return await this.userService.create(createUserDTO);
-  }
+  async getAuthenticatedUser(email: string, password: string) {
+    const user = await this.userService.getByEmail(email);
 
-  async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userService.findOneByEmail(email, false);
-
-    if (user && bcrypt.compareSync(password, user.password)) {
-      (user.password as User['password']) = undefined;
+    if (user.checkPassword(password)) {
       return user;
     }
+
     return null;
   }
 
-  async login(user: User) {
+  getRefreshToken(userId: string): { refreshToken: string; jwtId: string } {
+    const jwtId = uuidv4();
+    const payload = { userId };
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.refreshTokenSecretKey,
+      expiresIn: this.configService.refreshTokenTTL,
+      jwtid: jwtId,
+    });
+
+    return { refreshToken, jwtId };
+  }
+
+  getAccessToken(user: UserDocument) {
     const payload: JwtPayload = { username: user.email, sub: user._id };
 
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    const accessToken = this.jwtService.sign(payload);
+
+    return accessToken;
   }
 }
