@@ -1,8 +1,46 @@
 .logo {
-  height: 32px;
-  margin: 16px;
-  background: rgba(255, 255, 255, 0.2);
+  float: left;
+  width: 100px;
+  height: 31px;
+  margin: 16px 100px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
 }
-.site-layout .site-layout-background {
-  background: #fff;
+
+.logout {
+  float: right;
+  margin: 16px 0;
+}
+
+.container {
+  margin-top: 64px;
+
+  .menu {
+    overflow: auto;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+  }
+
+  .wrapper {
+    margin-left: 200px;
+
+    .content {
+      margin: 24px 16px 0;
+      overflow: initial;
+      min-height: calc(100vh - 158px);
+
+      .contentBackground {
+        padding: 24px;
+        background: #fff;
+        min-height: 100%;
+      }
+    }
+  }
+}
+
+.header {
+  color: white;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
 }
