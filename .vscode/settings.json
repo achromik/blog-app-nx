@@ -11,5 +11,6 @@
   "explorerExclude.backup": {},
   "files.associations": {
     "*.env*": "env"
-  }
+  },
+  "cSpell.words": ["Appstore"]
 }
