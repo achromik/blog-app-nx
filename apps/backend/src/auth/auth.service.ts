@@ -25,11 +25,17 @@ export class AuthService {
   async getAuthenticatedUser(email: string, password: string) {
     const user = await this.userService.getByEmail(email);
 
-    if (user.checkPassword(password)) {
-      return user;
+    if (!user) {
+      return null;
     }
 
-    return null;
+    const isValidPassword = await user.checkPassword(password);
+
+    if (!isValidPassword) {
+      return null;
+    }
+
+    return user;
   }
 
   getRefreshToken(userId: string): { refreshToken: string; jwtId: string } {
