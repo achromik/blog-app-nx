@@ -34,8 +34,10 @@ export interface UserPayload {
 }
 
 export interface AuthenticationPayload extends UserPayload {
-  payload: {
-    accessToken: string;
-    refreshToken: string;
-  };
+  payload: Tokens;
+}
+
+export interface Tokens {
+  accessToken: string;
+  refreshToken: string;
 }

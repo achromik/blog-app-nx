@@ -1,27 +1,57 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { LoginData, LoginUserResponse, ErrorResponse } from '@libs/types';
-import { http } from 'utils/http';
-import { api } from 'config';
+import { LoginData, AuthResponse, ErrorResponse, Tokens } from '@libs/types';
+import { http } from '../../services/http';
+import { api } from '../../config';
+import { TokenService } from '../../services/token';
 
 export const logIn = createAsyncThunk<
-  string,
+  Tokens,
   LoginData,
   { rejectValue: string }
 >('auth/logIn', async ({ email, password }, thunkAPI) => {
   try {
     const url = api.endpoints.auth.login;
     const {
-      data: { access_token },
-    } = await http.post<LoginUserResponse>(url, {
+      data: {
+        payload: { accessToken, refreshToken },
+      },
+    } = await http.post<AuthResponse, any>(url, {
       email,
       password,
     });
 
-    localStorage.setItem('token', access_token);
+    TokenService.setAccessToken(accessToken);
+    TokenService.setRefreshToken(refreshToken);
 
-    return access_token;
+    return { accessToken, refreshToken };
+  } catch (err) {
+    return thunkAPI.rejectWithValue(
+      (err as AxiosError<ErrorResponse>).response?.data.message ??
+        'Unknown Error!'
+    );
+  }
+});
+
+export const refreshToken = createAsyncThunk<
+  Tokens,
+  undefined,
+  { rejectValue: string }
+>('auth/refreshToken', async (_, thunkAPI) => {
+  try {
+    const url = api.endpoints.auth.refresh;
+
+    const refreshToken = TokenService.getRefreshToken();
+
+    const {
+      data: { payload },
+    } = await http.post<any, any>(url, { refreshToken });
+
+    TokenService.setAccessToken(payload.accessToken);
+    TokenService.setRefreshToken(payload.refreshToken);
+
+    return payload;
   } catch (err) {
     return thunkAPI.rejectWithValue(
       (err as AxiosError<ErrorResponse>).response?.data.message ??

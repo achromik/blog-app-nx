@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { ROUTES } from 'config';
+import { ROUTES } from '../config';
 import { useAppSelector } from '../hooks';
 
 interface NonAuthRouteProps {

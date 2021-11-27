@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { ROUTES } from 'config';
+import { ROUTES } from '../config';
 import { useAppSelector } from '../hooks';
 
 interface AuthRouteProps {
@@ -10,7 +10,12 @@ interface AuthRouteProps {
 export const AuthRoute: React.FC<AuthRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
+  // useEffect(()-> {
+
+  // }[isAuthenticated])
+
   const location = useLocation();
+
   if (isAuthenticated) {
     return children;
   }

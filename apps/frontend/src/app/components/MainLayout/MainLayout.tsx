@@ -39,7 +39,7 @@ export const MainLayout: React.FC<Props> = ({ children, title }) => (
           <Link to="test">Test</Link>
         </Menu.Item>
         <Menu.Item key="3" icon={<UploadOutlined />}>
-          nav 3
+          <Link to="me">Me</Link>
         </Menu.Item>
         <Menu.Item key="4" icon={<BarChartOutlined />}>
           nav 4
