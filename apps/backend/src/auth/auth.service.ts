@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { CreateUserDTO } from '../user/dto/create-user.dto';
 import { UserDocument } from '../user/interfaces/user.interface';
 import { UserService } from '../user/user.service';
 import { AppConfigService } from '../config/app/configuration.service';
@@ -19,12 +18,6 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly configService: AppConfigService
   ) {}
-
-  async register(createUserDTO: CreateUserDTO) {
-    const user = await this.userService.create(createUserDTO);
-
-    return user;
-  }
 
   async getAuthenticatedUser(email: string, password: string) {
     const user = await this.userService.getByEmail(email);
@@ -42,7 +35,7 @@ export class AuthService {
     return user;
   }
 
-  async getRefreshToken(userId: string, deviceId: string): Promise<string> {
+  async createRefreshToken(userId: string, deviceId: string): Promise<string> {
     const jti = uuidv4();
     const payload = { userId };
 
@@ -71,7 +64,7 @@ export class AuthService {
     return createdToken;
   }
 
-  getAccessToken(user: UserDocument) {
+  createAccessToken(user: UserDocument) {
     const payload: JwtPayload = { username: user.email, sub: user._id };
 
     const accessToken = this.jwtService.sign(payload);
