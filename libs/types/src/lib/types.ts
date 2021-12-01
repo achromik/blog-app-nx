@@ -41,3 +41,10 @@ export interface Tokens {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface Token {
+  jti: string;
+  userId: string;
+  device: string;
+  iat: number;
+}

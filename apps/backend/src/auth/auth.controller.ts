@@ -6,6 +6,7 @@ import {
   Post,
   UseGuards,
   Request,
+  Headers,
 } from '@nestjs/common';
 import {
   AuthenticationPayload,
@@ -22,6 +23,7 @@ import { RequestWithUser } from './interfaces/requestWithUser.interface';
 import { UserService } from '../user/user.service';
 import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
 import { RequestWithUserID } from './interfaces/requestWithUserId.interface';
+import { DeviceIdGuard } from '../shared/guards/device.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -49,14 +51,18 @@ export class AuthController {
     }
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard, DeviceIdGuard)
   @Post('login')
-  async login(@Request() req: RequestWithUser): Promise<AuthResponse> {
+  async login(
+    @Request() req: RequestWithUser,
+    @Headers('x-device-id') device: string
+  ): Promise<AuthResponse> {
     const { user } = req;
-    const { refreshToken, jwtId } = this.authService.getRefreshToken(user._id);
     const accessToken = this.authService.getAccessToken(user);
-
-    await this.userService.setRefreshToken(user._id, jwtId);
+    const refreshToken = await this.authService.getRefreshToken(
+      user._id,
+      device
+    );
 
     const payload = this.buildResponsePayload(user, accessToken, refreshToken);
 
@@ -66,17 +72,21 @@ export class AuthController {
     };
   }
 
-  @UseGuards(RefreshTokenAuthGuard)
+  @UseGuards(RefreshTokenAuthGuard, DeviceIdGuard)
   @Post('refresh')
-  async refresh(@Request() req: RequestWithUserID): Promise<AuthResponse> {
-    const { userId } = req.user;
+  async refresh(
+    @Request() req: RequestWithUserID,
+    @Headers('x-device-id') device: string
+  ): Promise<AuthResponse> {
+    const { userId, jti } = req.user;
 
     const user = await this.userService.getById(userId);
 
     const accessToken = this.authService.getAccessToken(user);
-    const { refreshToken, jwtId } = this.authService.getRefreshToken(userId);
 
-    await this.userService.setRefreshToken(userId, jwtId);
+    await this.authService.revokeRefreshToken(jti);
+
+    const refreshToken = await this.authService.getRefreshToken(userId, device);
 
     const payload = this.buildResponsePayload(user, accessToken, refreshToken);
 

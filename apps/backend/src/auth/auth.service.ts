@@ -7,12 +7,16 @@ import { CreateUserDTO } from '../user/dto/create-user.dto';
 import { UserDocument } from '../user/interfaces/user.interface';
 import { UserService } from '../user/user.service';
 import { AppConfigService } from '../config/app/configuration.service';
+import { Token } from '@libs/types';
+import { TokenDocument } from '../token/interfaces/token.interface';
+import { TokenService } from '../token/token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly tokenService: TokenService,
     private readonly configService: AppConfigService
   ) {}
 
@@ -38,17 +42,33 @@ export class AuthService {
     return user;
   }
 
-  getRefreshToken(userId: string): { refreshToken: string; jwtId: string } {
-    const jwtId = uuidv4();
+  async getRefreshToken(userId: string, deviceId: string): Promise<string> {
+    const jti = uuidv4();
     const payload = { userId };
 
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.refreshTokenSecretKey,
       expiresIn: this.configService.refreshTokenTTL,
-      jwtid: jwtId,
+      jwtid: jti,
     });
 
-    return { refreshToken, jwtId };
+    const { iat } = this.jwtService.decode(refreshToken) as { iat: number };
+
+    await this.tokenService.create({
+      userId,
+      device: deviceId,
+      jti,
+      iat,
+    });
+
+    return refreshToken;
+  }
+
+  async setRefreshToken(token: Token): Promise<TokenDocument> {
+    console.log({ ...token });
+    const createdToken = await this.tokenService.create(token);
+
+    return createdToken;
   }
 
   getAccessToken(user: UserDocument) {
@@ -57,5 +77,9 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload);
 
     return accessToken;
+  }
+
+  async revokeRefreshToken(jti: string) {
+    await this.tokenService.removeByJTI(jti);
   }
 }

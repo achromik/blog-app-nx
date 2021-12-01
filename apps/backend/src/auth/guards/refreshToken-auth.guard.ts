@@ -4,7 +4,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 @Injectable()
 export class RefreshTokenAuthGuard extends AuthGuard('jwt-refresh-token') {
-  handleRequest(err, user, info: Error) {
+  handleRequest(err, token, info: Error) {
     if (info instanceof TokenExpiredError) {
       throw new BadRequestException('Token expired!');
     }
@@ -13,11 +13,12 @@ export class RefreshTokenAuthGuard extends AuthGuard('jwt-refresh-token') {
       throw new BadRequestException(info.message);
     }
 
-    if (err || !user) {
+    if (err || !token) {
       throw new BadRequestException(
         err?.message ?? 'Refreshing token went wrong!'
       );
     }
-    return user;
+
+    return token;
   }
 }

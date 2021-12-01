@@ -30,25 +30,4 @@ export class UserService {
 
     return user;
   }
-
-  // async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
-  //   const user = await this.getById(userId);
-
-  //   user.validateRefreshToken();
-  // }
-
-  async setRefreshToken(userId: string, jti: string) {
-    // dont't change to updateOne because this solution
-    // is needed to fire UserSchema.pre('save') hook
-    // to store hashed refreshToken in database
-    const user = await this.userModel.findById(userId);
-
-    // due to impossible assign into read-only prop
-    // below are equivalent hooks to miss that issue
-    // user = Object.assign(user, { refreshToken: token });
-    (user.jti as UserDocument['jti']) = jti;
-    await user.save();
-
-    return user;
-  }
 }
