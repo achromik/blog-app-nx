@@ -2,7 +2,7 @@ export function types(): string {
   return 'types';
 }
 interface Response {
-  status: string;
+  status: Status;
 }
 export interface AuthResponse extends Response {
   data: AuthenticationPayload;
@@ -47,4 +47,12 @@ export interface Token {
   userId: string;
   device: string;
   iat: number;
+}
+
+export enum Header {
+  DEVICE_ID = 'x-device-id',
+}
+
+export enum Status {
+  SUCCESS = 'success',
 }

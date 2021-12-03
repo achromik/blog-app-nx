@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+import { Header } from '@libs/types';
 import { AppConfigService } from '../../config/app/configuration.service';
 import { TokenService } from '../../token/token.service';
 import { UserService } from '../../user/user.service';
@@ -33,7 +34,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
   ): Promise<RefreshTokenPayload> {
     const { userId, jti } = payload;
 
-    const device = req.headers['x-device-id'];
+    const device = req.headers[Header.DEVICE_ID];
 
     const user = await this.userService.getById(userId);
 
@@ -43,18 +44,20 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
       throw new BadRequestException('Provided refreshToken is invalid!');
     }
 
-    const token = await this.tokenService.findByJTI(jti);
+    const token = await this.tokenService.findByUserId(userId);
 
     if (!token) {
-      this.logger.error(`Token with jti: ${jti} not found`);
+      this.logger.error(`Token for userId: ${userId} not found`);
 
       throw new BadRequestException('Provided refreshToken is invalid!');
     }
 
-    const isValid = token.validateToken(userId, jti, device);
+    const isValid = await token.validateToken(userId, jti, device);
 
     if (!isValid) {
-      this.logger.error(`Token: ${token} is invalid`);
+      this.logger.error(`Token for userId: ${userId} is invalid`);
+      console.log({ ...token });
+      console.log(userId, jti, device);
 
       throw new BadRequestException('Provided refreshToken is invalid!');
     }

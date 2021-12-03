@@ -28,13 +28,13 @@ export const UserSchema = new mongoose.Schema<UserDocument>(
 UserSchema.pre('save', async function (next) {
   try {
     if (this.password && this.isModified('password')) {
-      const passwordSaltRound = await bcrypt.genSalt(10);
+      const salt = await bcrypt.genSalt(10);
 
       // due to impossible assign into read-only prop
       // below is hook to miss that issue
       (this.password as UserDocument['password']) = await bcrypt.hash(
         this.password,
-        passwordSaltRound
+        salt
       );
     }
     next();

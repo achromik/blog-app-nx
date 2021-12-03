@@ -12,26 +12,39 @@ export class TokenService {
 
   async create(token: Token): Promise<TokenDocument> {
     try {
-      const createdToken = new this.tokenModel(token);
+      const tokenDoc = await this.tokenModel.findOne({
+        userId: token.userId,
+      });
 
-      await createdToken.save();
+      if (!tokenDoc) {
+        const createdToken = new this.tokenModel(token);
 
-      return createdToken;
+        await createdToken.save();
+
+        return createdToken;
+      }
+
+      // due to impossible assign into read-only prop
+      // below is hook to miss that issue
+      (tokenDoc.jti as TokenDocument['jti']) = token.jti;
+      (tokenDoc.iat as TokenDocument['iat']) = token.iat;
+      (tokenDoc.device as TokenDocument['device']) = token.device;
+
+      await tokenDoc.save();
+      return tokenDoc;
     } catch (err) {
       console.log(err);
     }
   }
 
-  async removeByJTI(jti: string) {
-    const deletedToken = await this.tokenModel.findOneAndDelete({
-      jti,
-    });
+  async removeByUserId(userId: string): Promise<TokenDocument> {
+    const deletedToken = await this.tokenModel.findOneAndDelete({ userId });
 
     return deletedToken;
   }
 
-  async findByJTI(jti: string): Promise<TokenDocument> {
-    const token = await this.tokenModel.findOne({ jti });
+  async findByUserId(userId: string): Promise<TokenDocument> {
+    const token = await this.tokenModel.findOne({ userId });
 
     return token;
   }

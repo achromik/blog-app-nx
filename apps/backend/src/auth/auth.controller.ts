@@ -1,8 +1,20 @@
-import { Controller, Post, UseGuards, Request, Headers } from '@nestjs/common';
-import { AuthenticationPayload, AuthResponse } from '@libs/types';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Headers,
+  BadRequestException,
+  HttpCode,
+} from '@nestjs/common';
+import {
+  AuthenticationPayload,
+  AuthResponse,
+  Header,
+  Status,
+} from '@libs/types';
 
 import { UserDocument } from '../user/interfaces/user.interface';
-
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RequestWithUser } from './interfaces/requestWithUser.interface';
@@ -10,6 +22,7 @@ import { UserService } from '../user/user.service';
 import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
 import { RequestWithUserID } from './interfaces/requestWithUserId.interface';
 import { DeviceIdGuard } from '../shared/guards/device.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @UseGuards(DeviceIdGuard)
 @Controller('auth')
@@ -23,46 +36,64 @@ export class AuthController {
   @Post('login')
   async login(
     @Request() req: RequestWithUser,
-    @Headers('x-device-id') device: string
+    @Headers(Header.DEVICE_ID) deviceId: string
   ): Promise<AuthResponse> {
     const { user } = req;
     const accessToken = this.authService.createAccessToken(user);
     const refreshToken = await this.authService.createRefreshToken(
       user._id,
-      device
+      deviceId
     );
 
     const payload = this.buildResponsePayload(user, accessToken, refreshToken);
 
     return {
-      status: 'success',
+      status: Status.SUCCESS,
       data: payload,
     };
+  }
+
+  @UseGuards(JwtAuthGuard, RefreshTokenAuthGuard)
+  @Post('logout')
+  @HttpCode(200)
+  async logout(@Request() req: RequestWithUserID) {
+    try {
+      const { userId } = req.user;
+
+      await this.authService.revokeUserRefreshToken(userId);
+
+      return {
+        status: Status.SUCCESS,
+        data: this.buildResponsePayload(null, '', ''),
+      };
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
   }
 
   @UseGuards(RefreshTokenAuthGuard)
   @Post('refresh')
   async refresh(
     @Request() req: RequestWithUserID,
-    @Headers('x-device-id') device: string
+    @Headers(Header.DEVICE_ID) deviceId: string
   ): Promise<AuthResponse> {
-    const { userId, jti } = req.user;
+    const { userId } = req.user;
 
     const user = await this.userService.getById(userId);
 
     const accessToken = this.authService.createAccessToken(user);
 
-    await this.authService.revokeRefreshToken(jti);
+    await this.authService.revokeUserRefreshToken(userId);
 
     const refreshToken = await this.authService.createRefreshToken(
       userId,
-      device
+      deviceId
     );
 
     const payload = this.buildResponsePayload(user, accessToken, refreshToken);
 
     return {
-      status: 'success',
+      status: Status.SUCCESS,
       data: payload,
     };
   }

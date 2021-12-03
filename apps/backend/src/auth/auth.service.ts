@@ -6,7 +6,6 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { UserDocument } from '../user/interfaces/user.interface';
 import { UserService } from '../user/user.service';
 import { AppConfigService } from '../config/app/configuration.service';
-import { Token } from '@libs/types';
 import { TokenDocument } from '../token/interfaces/token.interface';
 import { TokenService } from '../token/token.service';
 
@@ -19,7 +18,10 @@ export class AuthService {
     private readonly configService: AppConfigService
   ) {}
 
-  async getAuthenticatedUser(email: string, password: string) {
+  async getAuthenticatedUser(
+    email: string,
+    password: string
+  ): Promise<UserDocument> {
     const user = await this.userService.getByEmail(email);
 
     if (!user) {
@@ -57,14 +59,7 @@ export class AuthService {
     return refreshToken;
   }
 
-  async setRefreshToken(token: Token): Promise<TokenDocument> {
-    console.log({ ...token });
-    const createdToken = await this.tokenService.create(token);
-
-    return createdToken;
-  }
-
-  createAccessToken(user: UserDocument) {
+  createAccessToken(user: UserDocument): string {
     const payload: JwtPayload = { username: user.email, sub: user._id };
 
     const accessToken = this.jwtService.sign(payload);
@@ -72,7 +67,7 @@ export class AuthService {
     return accessToken;
   }
 
-  async revokeRefreshToken(jti: string) {
-    await this.tokenService.removeByJTI(jti);
+  async revokeUserRefreshToken(userId: string): Promise<TokenDocument> {
+    return await this.tokenService.removeByUserId(userId);
   }
 }

@@ -8,7 +8,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { RegisterUserResponse } from '@libs/types';
+import { RegisterUserResponse, Status } from '@libs/types';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserFromJWT } from './interfaces/userFromJWT.interface';
@@ -27,7 +27,7 @@ export class UserController {
       const newUser = await this.userService.create(createUserDTO);
 
       return {
-        status: 'success',
+        status: Status.SUCCESS,
         data: { user: newUser },
       };
     } catch (err) {
@@ -45,7 +45,7 @@ export class UserController {
   ): Promise<RegisterUserResponse> {
     const user = await this.userService.getByEmail(req.user.email);
     return {
-      status: 'success',
+      status: Status.SUCCESS,
       data: { user },
     };
   }
