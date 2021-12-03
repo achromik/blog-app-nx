@@ -1,8 +1,7 @@
 import { Document } from 'mongoose';
+import { User } from '@libs/types';
 
-export interface User extends Document {
-  readonly email: string;
+export interface UserDocument extends Document, Readonly<User> {
   readonly password: string;
-  readonly firstName: string;
-  readonly lastName: string;
+  checkPassword: (password: string) => Promise<boolean>;
 }

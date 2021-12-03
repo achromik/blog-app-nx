@@ -11,12 +11,18 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AppConfigModule } from '../config/app/configuration.module';
 import { AppConfigService } from '../config/app/configuration.service';
+import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy';
+import { TokenService } from '../token/token.service';
+import { TokenSchema } from '../token/schemas/token.schema';
 
 @Module({
   imports: [
     PassportModule,
     AppConfigModule,
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      { name: 'Token', schema: TokenSchema },
+    ]),
     JwtModule.registerAsync({
       imports: [AppConfigModule],
       useFactory: async (config: AppConfigService) => ({
@@ -26,7 +32,14 @@ import { AppConfigService } from '../config/app/configuration.service';
       inject: [AppConfigService],
     }),
   ],
-  providers: [AuthService, UserService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    UserService,
+    TokenService,
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshTokenStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

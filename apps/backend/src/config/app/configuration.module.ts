@@ -11,6 +11,8 @@ import { AppConfigService } from './configuration.service';
       validationSchema: Joi.object({
         JWT_SECRET_KEY: Joi.string().min(15).required(),
         JWT_TTL: Joi.number(),
+        JWT_REFRESH_TOKEN_SECRET_KEY: Joi.string().min(15).required(),
+        JWT_REFRESH_TOKEN_TTL: Joi.number(),
       }),
     }),
   ],

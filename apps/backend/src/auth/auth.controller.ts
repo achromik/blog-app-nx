@@ -1,57 +1,114 @@
 import {
-  BadRequestException,
-  Body,
   Controller,
-  InternalServerErrorException,
   Post,
   UseGuards,
   Request,
+  Headers,
+  BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
-import { User } from '../user/interfaces/user.interface';
+import {
+  AuthenticationPayload,
+  AuthResponse,
+  Header,
+  Status,
+} from '@libs/types';
 
+import { UserDocument } from '../user/interfaces/user.interface';
 import { AuthService } from './auth.service';
-import { RegisterUserDTO } from './dto/register-user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { RequestWithUser } from './interfaces/requestWithUser.interface';
+import { UserService } from '../user/user.service';
+import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
+import { RequestWithUserID } from './interfaces/requestWithUserId.interface';
+import { DeviceIdGuard } from '../shared/guards/device.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
-interface RegisterUserResponse {
-  message: string;
-  user: User;
-}
-
-interface LoginUserResponse {
-  message: string;
-  access_token: string;
-}
-
+@UseGuards(DeviceIdGuard)
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
-
-  @Post('register')
-  async createUser(
-    @Body() createUserDTO: RegisterUserDTO
-  ): Promise<RegisterUserResponse> {
-    try {
-      const newUser = await this.authService.register(createUserDTO);
-
-      return {
-        message: 'User has been registered successfully!',
-        user: newUser,
-      };
-    } catch (err) {
-      if (err.name === 'MongoError' && err?.code === 11000) {
-        throw new BadRequestException('User with that email already exists!');
-      }
-      throw new InternalServerErrorException('Something went wrong!');
-    }
-  }
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req): Promise<LoginUserResponse> {
+  async login(
+    @Request() req: RequestWithUser,
+    @Headers(Header.DEVICE_ID) deviceId: string
+  ): Promise<AuthResponse> {
+    const { user } = req;
+    const accessToken = this.authService.createAccessToken(user);
+    const refreshToken = await this.authService.createRefreshToken(
+      user._id,
+      deviceId
+    );
+
+    const payload = this.buildResponsePayload(user, accessToken, refreshToken);
+
     return {
-      ...(await this.authService.login(req.user)),
-      message: 'User has been logged successfully!',
+      status: Status.SUCCESS,
+      data: payload,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, RefreshTokenAuthGuard)
+  @Post('logout')
+  @HttpCode(200)
+  async logout(@Request() req: RequestWithUserID) {
+    try {
+      const { userId } = req.user;
+
+      await this.authService.revokeUserRefreshToken(userId);
+
+      return {
+        status: Status.SUCCESS,
+        data: this.buildResponsePayload(null, '', ''),
+      };
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
+  }
+
+  @UseGuards(RefreshTokenAuthGuard)
+  @Post('refresh')
+  async refresh(
+    @Request() req: RequestWithUserID,
+    @Headers(Header.DEVICE_ID) deviceId: string
+  ): Promise<AuthResponse> {
+    const { userId } = req.user;
+
+    const user = await this.userService.getById(userId);
+
+    const accessToken = this.authService.createAccessToken(user);
+
+    await this.authService.revokeUserRefreshToken(userId);
+
+    const refreshToken = await this.authService.createRefreshToken(
+      userId,
+      deviceId
+    );
+
+    const payload = this.buildResponsePayload(user, accessToken, refreshToken);
+
+    return {
+      status: Status.SUCCESS,
+      data: payload,
+    };
+  }
+
+  private buildResponsePayload(
+    user: UserDocument,
+    accessToken: string,
+    refreshToken?: string
+  ): AuthenticationPayload {
+    return {
+      user: user,
+      payload: {
+        accessToken,
+        refreshToken,
+      },
     };
   }
 }

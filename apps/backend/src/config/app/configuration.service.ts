@@ -20,4 +20,12 @@ export class AppConfigService {
   get jwtTTL(): number {
     return this.configService.get<number>('app.jwtTTL');
   }
+
+  get refreshTokenSecretKey(): string {
+    return this.configService.get<string>('app.refreshTokenSecretKey');
+  }
+
+  get refreshTokenTTL(): number {
+    return this.configService.get<number>('app.refreshTokenTTL');
+  }
 }
