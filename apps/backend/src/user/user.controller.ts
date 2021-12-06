@@ -5,8 +5,7 @@ import {
   Body,
   Request,
   UseGuards,
-  BadRequestException,
-  InternalServerErrorException,
+  ValidationPipe,
 } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { RegisterUserResponse, Status } from '@libs/types';
@@ -14,7 +13,7 @@ import { RegisterUserResponse, Status } from '@libs/types';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserFromJWT } from './interfaces/userFromJWT.interface';
 import { UserService } from './user.service';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { RegisterUserDTO } from './dto/register-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -25,36 +24,28 @@ export class UserController {
 
   @Post('register')
   async createUser(
-    @Body() createUserDTO: CreateUserDTO
+    @Body(new ValidationPipe()) createUserDTO: RegisterUserDTO
   ): Promise<RegisterUserResponse> {
-    try {
-      const newUser = await this.userService.create(createUserDTO);
+    const newUser = await this.userService.create(createUserDTO);
 
-      this.mailerService
-        .sendMail({
-          to: 'achromik@maildrop.cc', // list of receivers
-          from: 'test@achromik.com', // sender address
-          subject: 'Testing Nest MailerModule ✔', // Subject line
-          text: 'welcome', // plaintext body
-          html: '<b>welcome</b>', // HTML body content
-        })
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    await this.mailerService.sendMail({
+      to: 'achromik@maildrop.c', // list of receivers
+      from: 'test@achromik.com', // sender address
+      subject: 'Testing Nest MailerModule ✔', // Subject line
+      text: 'welcome', // plaintext body
+      html: '<b>welcome</b>', // HTML body content
+    });
+    // .then((data) => {
+    //   console.log(data);
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
 
-      return {
-        status: Status.SUCCESS,
-        data: { user: newUser },
-      };
-    } catch (err) {
-      if (err.name === 'MongoError' && err?.code === 11000) {
-        throw new BadRequestException('User with that email already exists!');
-      }
-      throw new InternalServerErrorException('Something went wrong!');
-    }
+    return {
+      status: Status.SUCCESS,
+      data: { user: newUser },
+    };
   }
 
   @UseGuards(JwtAuthGuard)

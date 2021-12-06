@@ -6,6 +6,8 @@ import {
   Headers,
   BadRequestException,
   HttpCode,
+  Body,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   AuthenticationPayload,
@@ -23,6 +25,7 @@ import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
 import { RequestWithUserID } from './interfaces/requestWithUserId.interface';
 import { DeviceIdGuard } from '../shared/guards/device.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LoginUserDTO } from './dto/login-user.dto';
 
 @UseGuards(DeviceIdGuard)
 @Controller('auth')
@@ -36,6 +39,7 @@ export class AuthController {
   @Post('login')
   async login(
     @Request() req: RequestWithUser,
+    @Body(new ValidationPipe()) loginUserDto: LoginUserDTO,
     @Headers(Header.DEVICE_ID) deviceId: string
   ): Promise<AuthResponse> {
     const { user } = req;
