@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { RegisterUserDTO } from './dto/register-user.dto';
+import { CreateUserDTO } from '../auth/dto/create-user.dto';
 import { UserDocument } from './interfaces/user.interface';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class UserService {
     @InjectModel('User') private readonly userModel: Model<UserDocument>
   ) {}
 
-  async create(createUserDto: RegisterUserDTO): Promise<UserDocument> {
+  async create(createUserDto: CreateUserDTO): Promise<UserDocument> {
     const createdUser = new this.userModel(createUserDto);
 
     try {

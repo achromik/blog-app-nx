@@ -4,38 +4,28 @@ import {
   UseGuards,
   Request,
   Headers,
-  BadRequestException,
   HttpCode,
   Body,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  AuthenticationPayload,
-  AuthResponse,
-  Header,
-  Status,
-} from '@libs/types';
+import { AuthResponse, Header, RegisterUserResponse } from '@libs/types';
 
-import { UserDocument } from '../user/interfaces/user.interface';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RequestWithUser } from './interfaces/requestWithUser.interface';
-import { UserService } from '../user/user.service';
 import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
 import { RequestWithUserID } from './interfaces/requestWithUserId.interface';
 import { DeviceIdGuard } from '../shared/guards/device.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LoginUserDTO } from './dto/login-user.dto';
+import { CreateUserDTO } from './dto/create-user.dto';
 
-@UseGuards(DeviceIdGuard)
+// @UseGuards(DeviceIdGuard)
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard, DeviceIdGuard)
   @Post('login')
   async login(
     @Request() req: RequestWithUser,
@@ -43,39 +33,20 @@ export class AuthController {
     @Headers(Header.DEVICE_ID) deviceId: string
   ): Promise<AuthResponse> {
     const { user } = req;
-    const accessToken = this.authService.createAccessToken(user);
-    const refreshToken = await this.authService.createRefreshToken(
-      user._id,
-      deviceId
-    );
 
-    const payload = this.buildResponsePayload(user, accessToken, refreshToken);
-
-    return {
-      status: Status.SUCCESS,
-      data: payload,
-    };
+    return await this.authService.login(user, deviceId);
   }
 
   @UseGuards(JwtAuthGuard, RefreshTokenAuthGuard)
   @Post('logout')
   @HttpCode(200)
   async logout(@Request() req: RequestWithUserID) {
-    try {
-      const { userId } = req.user;
+    const { userId } = req.user;
 
-      await this.authService.revokeUserRefreshToken(userId);
-
-      return {
-        status: Status.SUCCESS,
-        data: this.buildResponsePayload(null, '', ''),
-      };
-    } catch (err) {
-      throw new BadRequestException(err.message);
-    }
+    return await this.authService.logout(userId);
   }
 
-  @UseGuards(RefreshTokenAuthGuard)
+  @UseGuards(RefreshTokenAuthGuard, DeviceIdGuard)
   @Post('refresh')
   async refresh(
     @Request() req: RequestWithUserID,
@@ -83,36 +54,13 @@ export class AuthController {
   ): Promise<AuthResponse> {
     const { userId } = req.user;
 
-    const user = await this.userService.getById(userId);
-
-    const accessToken = this.authService.createAccessToken(user);
-
-    await this.authService.revokeUserRefreshToken(userId);
-
-    const refreshToken = await this.authService.createRefreshToken(
-      userId,
-      deviceId
-    );
-
-    const payload = this.buildResponsePayload(user, accessToken, refreshToken);
-
-    return {
-      status: Status.SUCCESS,
-      data: payload,
-    };
+    return this.authService.refresh(userId, deviceId);
   }
 
-  private buildResponsePayload(
-    user: UserDocument,
-    accessToken: string,
-    refreshToken?: string
-  ): AuthenticationPayload {
-    return {
-      user: user,
-      payload: {
-        accessToken,
-        refreshToken,
-      },
-    };
+  @Post('register')
+  async createUser(
+    @Body(new ValidationPipe()) createUserDTO: CreateUserDTO
+  ): Promise<RegisterUserResponse> {
+    return await this.authService.register(createUserDTO);
   }
 }
