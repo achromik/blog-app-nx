@@ -7,12 +7,14 @@ export default registerAs<MongoConfig>('mongo', (): MongoConfig => {
   const port = getEnvNumber('MONGODB_PORT', 21017);
   const user = getEnvString('MONGODB_USERNAME');
   const pass = getEnvString('MONGODB_PASSWORD');
+  const dbName = getEnvString('MONGODB_DATABASE_NAME', 'nxAppDb');
 
   return {
     host,
     port,
     user,
     pass,
+    dbName,
     uri: `mongodb://${user}:${pass}@${host}:${port}/`,
   };
 });

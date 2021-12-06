@@ -3,5 +3,6 @@ export interface MongoConfig {
   port: number;
   user: string;
   pass: string;
+  dbName: string;
   uri: string;
 }

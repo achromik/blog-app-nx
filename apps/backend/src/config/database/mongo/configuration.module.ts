@@ -14,6 +14,7 @@ import { MongoConfigService } from './configuration.service';
         MONGODB_PORT: Joi.number().required(),
         MONGODB_USERNAME: Joi.string().required(),
         MONGODB_PASSWORD: Joi.string().required(),
+        MONGODB_DATABASE: Joi.string().allow(null).allow('').optional(),
       }),
       validationOptions: {
         allowUnknown: true,

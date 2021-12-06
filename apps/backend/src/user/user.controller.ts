@@ -8,6 +8,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
 import { RegisterUserResponse, Status } from '@libs/types';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,7 +18,10 @@ import { CreateUserDTO } from './dto/create-user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private readonly mailerService: MailerService
+  ) {}
 
   @Post('register')
   async createUser(
@@ -25,6 +29,21 @@ export class UserController {
   ): Promise<RegisterUserResponse> {
     try {
       const newUser = await this.userService.create(createUserDTO);
+
+      this.mailerService
+        .sendMail({
+          to: 'achromik@maildrop.cc', // list of receivers
+          from: 'test@achromik.com', // sender address
+          subject: 'Testing Nest MailerModule ✔', // Subject line
+          text: 'welcome', // plaintext body
+          html: '<b>welcome</b>', // HTML body content
+        })
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
       return {
         status: Status.SUCCESS,
