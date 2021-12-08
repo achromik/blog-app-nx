@@ -24,4 +24,8 @@ export class MailerConfigService {
   get mailFrom(): string {
     return this.configService.get<string>('mailer.mailFrom');
   }
+
+  get appName(): string {
+    return this.configService.get<string>('app.name');
+  }
 }

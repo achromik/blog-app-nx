@@ -28,4 +28,8 @@ export class AppConfigService {
   get refreshTokenTTL(): number {
     return this.configService.get<number>('app.refreshTokenTTL');
   }
+
+  get appName(): string {
+    return this.configService.get<string>('app.name');
+  }
 }

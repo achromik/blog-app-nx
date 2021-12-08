@@ -14,6 +14,7 @@ import { MailerConfigService } from './configuration.service';
         GOOGLE_CLIENT_ID: Joi.string().required(),
         GOOGLE_CLIENT_SECRET: Joi.string().required(),
         GOOGLE_REFRESH_TOKEN: Joi.string().required(),
+        MAIL_FROM: Joi.string().required(),
       }),
       validationOptions: {
         allowUnknown: true,

@@ -5,4 +5,7 @@ export interface AppConfig {
   jwtTTL: number;
   refreshTokenSecretKey: string;
   refreshTokenTTL: number;
+  confirmTokenSecretKey: string;
+  confirmTokenTTL: number;
+  name: string;
 }

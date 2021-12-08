@@ -18,7 +18,7 @@ async function bootstrap() {
             winston.format.timestamp(),
             winston.format.ms(),
             nestWinstonModuleUtilities.format.nestLike(
-              process.env.npm_package_name,
+              process.env.APP_NAME || process.env.npm_package_name,
               {
                 prettyPrint: true,
               }

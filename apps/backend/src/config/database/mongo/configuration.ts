@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { MongoConfig } from '../../interfaces/mongo.interface';
+import { MongoConfig } from '../../interfaces/mongoConfig.interface';
 import { getEnvNumber, getEnvString } from '../../utils';
 
 export default registerAs<MongoConfig>('mongo', (): MongoConfig => {

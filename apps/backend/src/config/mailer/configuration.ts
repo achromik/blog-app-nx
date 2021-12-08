@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { MailerConfig } from '../interfaces/mailer.interface';
+import { MailerConfig } from '../interfaces/mailerConfig.interface';
 import { getEnvString } from '../utils';
 
 export default registerAs<MailerConfig>('mailer', (): MailerConfig => {
