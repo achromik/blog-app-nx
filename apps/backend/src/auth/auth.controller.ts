@@ -7,6 +7,7 @@ import {
   HttpCode,
   Body,
   ValidationPipe,
+  Get,
 } from '@nestjs/common';
 import { AuthResponse, Header, RegisterUserResponse } from '@libs/types';
 
@@ -14,11 +15,13 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RequestWithUser } from './interfaces/requestWithUser.interface';
 import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
-import { RequestWithUserID } from './interfaces/requestWithUserId.interface';
+import { ConfirmTokenAuthGuard } from './guards/confirmTokenAuth.guard';
+import { RequestWithUserId } from './interfaces/requestWithUserId.interface';
 import { DeviceIdGuard } from '../shared/guards/device.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { RequestWithUserEmail } from './interfaces/requestWithUserEmail.interface';
 
 // @UseGuards(DeviceIdGuard)
 @Controller('auth')
@@ -40,16 +43,16 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RefreshTokenAuthGuard)
   @Post('logout')
   @HttpCode(200)
-  async logout(@Request() req: RequestWithUserID) {
+  async logout(@Request() req: RequestWithUserId) {
     const { userId } = req.user;
 
     return await this.authService.logout(userId);
   }
 
-  @UseGuards(RefreshTokenAuthGuard, DeviceIdGuard)
+  @UseGuards(DeviceIdGuard, RefreshTokenAuthGuard)
   @Post('refresh')
   async refresh(
-    @Request() req: RequestWithUserID,
+    @Request() req: RequestWithUserId,
     @Headers(Header.DEVICE_ID) deviceId: string
   ): Promise<AuthResponse> {
     const { userId } = req.user;
@@ -62,5 +65,13 @@ export class AuthController {
     @Body(new ValidationPipe()) createUserDTO: CreateUserDTO
   ): Promise<RegisterUserResponse> {
     return await this.authService.register(createUserDTO);
+  }
+
+  @UseGuards(ConfirmTokenAuthGuard)
+  @Get('verify')
+  async verify(@Request() req: RequestWithUserEmail) {
+    const { email } = req.user;
+
+    return await this.authService.confirmEmail(email);
   }
 }

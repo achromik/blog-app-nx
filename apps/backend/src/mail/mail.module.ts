@@ -11,6 +11,7 @@ console.log(join(__dirname, 'assets/templates'));
 
 @Module({
   imports: [
+    MailerConfigModule,
     NestMailerModule.forRootAsync({
       imports: [MailerConfigModule],
       useFactory: async (config: MailerConfigService) => ({

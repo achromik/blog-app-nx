@@ -11,8 +11,10 @@ export class UserService {
     @InjectModel('User') private readonly userModel: Model<UserDocument>
   ) {}
 
-  async create(createUserDto: CreateUserDTO): Promise<UserDocument> {
-    const createdUser = new this.userModel(createUserDto);
+  async create(
+    createUser: CreateUserDTO & { confirmToken: string }
+  ): Promise<UserDocument> {
+    const createdUser = new this.userModel(createUser);
 
     try {
       await createdUser.save();
@@ -36,5 +38,12 @@ export class UserService {
     const user = await this.userModel.findById(id);
 
     return user;
+  }
+
+  async setIsActive(email: string, isActive = true): Promise<UserDocument> {
+    return await this.userModel.findOneAndUpdate(
+      { email },
+      { isActive, confirmToken: undefined }
+    );
   }
 }

@@ -16,6 +16,14 @@ export const UserSchema = new mongoose.Schema<UserDocument>(
     },
     firstName: String,
     lastName: String,
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+    confirmToken: {
+      type: String,
+      unique: true,
+    },
   },
   {
     timestamps: {
@@ -60,6 +68,8 @@ UserSchema.set('toJSON', {
     // due to impossible assign into read-only prop
     // below is hook to miss that issue
     (ret.password as UserDocument['password']) = undefined;
+    (ret.isActive as UserDocument['isActive']) = undefined;
+    (ret.confirmToken as UserDocument['confirmToken']) = undefined;
 
     return ret;
   },

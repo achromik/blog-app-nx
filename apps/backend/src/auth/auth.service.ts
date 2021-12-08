@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 
-import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtPayload } from './interfaces/jwtPayload.interface';
 import { UserDocument } from '../user/interfaces/user.interface';
 import { UserService } from '../user/user.service';
 import { AppConfigService } from '../config/app/configuration.service';
@@ -15,6 +15,7 @@ import {
   Status,
 } from '@libs/types';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,8 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
-    private readonly configService: AppConfigService
+    private readonly configService: AppConfigService,
+    private readonly mailService: MailService
   ) {}
 
   async getAuthenticatedUser(
@@ -32,13 +34,19 @@ export class AuthService {
     const user = await this.userService.getByEmail(email);
 
     if (!user) {
-      return null;
+      throw new UnauthorizedException('Provided credentials are invalid!');
+    }
+
+    if (!user.isActive) {
+      throw new UnauthorizedException(
+        'Pending account. Please verify your email.'
+      );
     }
 
     const isValidPassword = await user.checkPassword(password);
 
     if (!isValidPassword) {
-      return null;
+      throw new UnauthorizedException('Provided credentials are invalid!');
     }
 
     return user;
@@ -79,25 +87,27 @@ export class AuthService {
   }
 
   async register(createUserDto: CreateUserDTO): Promise<RegisterUserResponse> {
-    const newUser = await this.userService.create(createUserDto);
+    const confirmToken = this.createConfirmToken(createUserDto.email);
 
-    // await this.mailerService.sendMail({
-    //   to: 'achromik@maildrop.c', // list of receivers
-    //   from: 'test@achromik.com', // sender address
-    //   subject: 'Testing Nest MailerModule ✔', // Subject line
-    //   text: 'welcome', // plaintext body
-    //   html: '<b>welcome</b>', // HTML body content
-    // });
-    // .then((data) => {
-    //   console.log(data);
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
+    const newUser = await this.userService.create({
+      ...createUserDto,
+      confirmToken,
+    });
+
+    await this.mailService.registrationMail(newUser, confirmToken);
 
     return {
       status: Status.SUCCESS,
       data: { user: newUser },
+    };
+  }
+
+  async confirmEmail(email: string) {
+    const user = await this.userService.setIsActive(email);
+
+    return {
+      status: Status.SUCCESS,
+      data: { user },
     };
   }
 
@@ -124,6 +134,15 @@ export class AuthService {
     });
 
     return refreshToken;
+  }
+
+  private createConfirmToken(userEmail: string): string {
+    const payload = { sub: userEmail };
+
+    return this.jwtService.sign(payload, {
+      // expiresIn: '24h',
+      expiresIn: '15s',
+    });
   }
 
   private createAccessToken(user: UserDocument): string {
