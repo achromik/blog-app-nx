@@ -20,4 +20,8 @@ export class MailerConfigService {
   get refreshToken(): string {
     return this.configService.get<string>('mailer.refreshToken');
   }
+
+  get mailFrom(): string {
+    return this.configService.get<string>('mailer.mailFrom');
+  }
 }

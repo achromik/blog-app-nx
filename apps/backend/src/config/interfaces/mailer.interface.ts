@@ -3,4 +3,5 @@ export interface MailerConfig {
   clientId: string;
   clientSecret: string;
   refreshToken: string;
+  mailFrom: string;
 }

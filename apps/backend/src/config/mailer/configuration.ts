@@ -7,11 +7,13 @@ export default registerAs<MailerConfig>('mailer', (): MailerConfig => {
   const clientId = getEnvString('GOOGLE_CLIENT_ID');
   const clientSecret = getEnvString('GOOGLE_CLIENT_SECRET');
   const refreshToken = getEnvString('GOOGLE_REFRESH_TOKEN');
+  const mailFrom = getEnvString('MAIL_FROM');
 
   return {
     user,
     clientId,
     clientSecret,
     refreshToken,
+    mailFrom,
   };
 });
