@@ -29,6 +29,14 @@ export class AppConfigService {
     return this.configService.get<number>('app.refreshTokenTTL');
   }
 
+  get confirmTokenSecretKey(): string {
+    return this.configService.get<string>('app.confirmTokenSecretKet');
+  }
+
+  get ConfirmTokenTTL(): number {
+    return this.configService.get<number>('app.confirmTokenTTL');
+  }
+
   get appName(): string {
     return this.configService.get<string>('app.name');
   }

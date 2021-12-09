@@ -140,8 +140,8 @@ export class AuthService {
     const payload = { sub: userEmail };
 
     return this.jwtService.sign(payload, {
-      // expiresIn: '24h',
-      expiresIn: '15s',
+      secret: this.configService.confirmTokenSecretKey,
+      expiresIn: this.configService.ConfirmTokenTTL,
     });
   }
 
