@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { AppConfig } from '../interfaces/appConfig.interface';
-import { getEnvNumber, getEnvString } from '../utils';
+import { getEnvNumber, getEnvString } from '@libs/utils';
 
 export default registerAs<AppConfig>(
   'app',

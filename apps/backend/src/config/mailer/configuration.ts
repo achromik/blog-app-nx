@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { MailerConfig } from '../interfaces/mailerConfig.interface';
-import { getEnvString } from '../utils';
+import { getEnvString } from '@libs/utils';
 
 export default registerAs<MailerConfig>('mailer', (): MailerConfig => {
   const user = getEnvString('GOOGLE_USER');

@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { MongoConfig } from '../../interfaces/mongoConfig.interface';
-import { getEnvNumber, getEnvString } from '../../utils';
+import { getEnvNumber, getEnvString } from '@libs/utils';
 
 export default registerAs<MongoConfig>('mongo', (): MongoConfig => {
   const host = getEnvString('MONGODB_HOST', 'localhost');
