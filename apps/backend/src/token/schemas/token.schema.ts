@@ -34,8 +34,8 @@ TokenSchema.pre(/^save/, async function (this: TokenDocument, next) {
     if (this.jti && this.isModified('jti')) {
       const salt = await bcrypt.genSalt(10);
 
-      // due to impossible assign into read-only prop
-      // below is hook to miss that issue
+      // Due to impossibility to reassign the read-only property,
+      // below is the hook to miss that issue
       (this.jti as TokenDocument['jti']) = await bcrypt.hash(this.jti, salt);
     }
     next();
