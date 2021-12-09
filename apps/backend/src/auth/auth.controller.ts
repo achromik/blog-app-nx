@@ -8,6 +8,7 @@ import {
   Body,
   ValidationPipe,
   Get,
+  Query,
 } from '@nestjs/common';
 import { AuthResponse, Header, RegisterUserResponse } from '@libs/types';
 
@@ -69,9 +70,12 @@ export class AuthController {
 
   @UseGuards(ConfirmTokenAuthGuard)
   @Get('verify')
-  async verify(@Request() req: RequestWithUserEmail) {
+  async verify(
+    @Request() req: RequestWithUserEmail,
+    @Query('token') confirmToken: string
+  ) {
     const { email } = req.user;
 
-    return await this.authService.confirmEmail(email);
+    return await this.authService.confirmEmail(email, confirmToken);
   }
 }

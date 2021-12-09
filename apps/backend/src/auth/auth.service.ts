@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -102,8 +106,15 @@ export class AuthService {
     };
   }
 
-  async confirmEmail(email: string) {
-    const user = await this.userService.setIsActive(email);
+  async confirmEmail(email: string, confirmToken: string) {
+    const user = await this.userService.getByEmail(email);
+    const isValidConfirmToken = user.checkConfirmToken(confirmToken);
+
+    if (!isValidConfirmToken) {
+      throw new BadRequestException('Invalid confirm token!');
+    }
+
+    await this.userService.setStatus(email);
 
     return {
       status: Status.SUCCESS,
