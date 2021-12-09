@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 
 import { UserDocument } from '../interfaces/user.interface';
+import { hashSHA256 } from '@libs/utils';
 
 export const UserSchema = new mongoose.Schema<UserDocument>(
   {
@@ -33,17 +34,25 @@ export const UserSchema = new mongoose.Schema<UserDocument>(
   }
 );
 
-UserSchema.pre('save', async function (next) {
+UserSchema.pre(/^save/, async function (next) {
   try {
     if (this.password && this.isModified('password')) {
       const salt = await bcrypt.genSalt(10);
 
-      // due to impossible assign into read-only prop
-      // below is hook to miss that issue
+      // Due to impossibility to reassign the read-only property,
+      // below is the hook to miss that issue
       (this.password as UserDocument['password']) = await bcrypt.hash(
         this.password,
         salt
       );
+    }
+
+    if (this.confirmToken && this.isModified('confirmToken')) {
+      const hash = hashSHA256(this.confirmToken);
+
+      // Due to impossibility to reassign the read-only property,
+      // below is the hook to miss that issue
+      (this.confirmToken as UserDocument['confirmToken']) = hash;
     }
     next();
   } catch (err) {
@@ -59,14 +68,23 @@ UserSchema.methods.checkPassword = async function (
   return isValid;
 };
 
+UserSchema.methods.checkConfirmToken = function (
+  this: UserDocument,
+  confirmToken: string
+) {
+  const isValid = hashSHA256(confirmToken) === this.confirmToken;
+
+  return isValid;
+};
+
 UserSchema.set('toJSON', {
   virtuals: true,
   transform: function (_document: UserDocument, ret: UserDocument) {
     delete ret._id;
     delete ret.__v;
 
-    // due to impossible assign into read-only prop
-    // below is hook to miss that issue
+    // Due to impossibility to reassign the read-only property,
+    // below is the hook to miss that issue
     (ret.password as UserDocument['password']) = undefined;
     (ret.isActive as UserDocument['isActive']) = undefined;
     (ret.confirmToken as UserDocument['confirmToken']) = undefined;

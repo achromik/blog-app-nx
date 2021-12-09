@@ -6,4 +6,5 @@ export interface UserDocument extends Document, Readonly<User> {
   readonly isActive: boolean;
   readonly confirmToken: string;
   checkPassword: (password: string) => Promise<boolean>;
+  checkConfirmToken: (confirmToken: string) => boolean;
 }
