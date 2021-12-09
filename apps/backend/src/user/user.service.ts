@@ -40,10 +40,21 @@ export class UserService {
     return user;
   }
 
-  async setIsActive(email: string, isActive = true): Promise<UserDocument> {
-    return await this.userModel.findOneAndUpdate(
-      { email },
-      { isActive, confirmToken: undefined }
-    );
+  async setStatus(
+    email: string,
+    isActive = true,
+    confirmToken?: string
+  ): Promise<UserDocument> {
+    const user = await this.userModel.findOne({ email });
+
+    // Due to impossibility to reassign the read-only property,
+    // below is the hook to miss that issue
+    (user.isActive as UserDocument['isActive']) = isActive;
+    (user.confirmToken as UserDocument['confirmToken']) = confirmToken;
+
+    user.markModified('confirmToken');
+    await user.save();
+
+    return user;
   }
 }
