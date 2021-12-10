@@ -1,4 +1,7 @@
 export const ROUTES = {
   login: '/login',
-  dashboard: '/dashboard',
+  register: `/register`,
+  dashboard: {
+    index: '/dashboard/*',
+  },
 };
