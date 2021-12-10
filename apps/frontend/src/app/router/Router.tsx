@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 
 import { ROUTES } from '../config';
-import { Dashboard } from '../sections/Dashboard/Dashboard';
-import { Login } from '../sections/Login/Login';
+import { Dashboard } from '../views/Dashboard/Dashboard';
+import { Login } from '../views/Login/Login';
 import { AuthRoute } from './AuthRoute';
 import { NonAuthRoute } from './NonAuthRoute';
 

@@ -48,13 +48,8 @@ export const Login: React.FC = () => {
   return (
     <Row className={styles.row} justify="center" align="middle">
       <Col md={6}>
-        <Card title="Log In">
-          <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-          >
+        <Card title="Sign In">
+          <Form name="normal_login" className="login-form" onFinish={onFinish}>
             <Form.Item
               name="email"
               rules={[{ required: true, message: 'Please input your Email!' }]}
@@ -86,14 +81,13 @@ export const Login: React.FC = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="login-form-button"
-                style={{ width: '100%' }}
+                className={styles.button}
               >
                 Log in
               </Button>
               <Row justify="space-between">
                 <Col>
-                  Or <Link to="/register">register now!</Link>
+                  Or <Link to="/register">sign up</Link> now!
                 </Col>
               </Row>
             </Form.Item>
