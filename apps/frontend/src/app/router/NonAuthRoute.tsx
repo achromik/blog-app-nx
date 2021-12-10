@@ -16,7 +16,9 @@ export const NonAuthRoute: React.FC<NonAuthRouteProps> = ({ children }) => {
   // const dashboard = user?.role === Role.STUDENT ? routes.STUDENT_DASHBOARD : routes.TEACHER_DASHBOARD;
 
   if (isAuthenticated) {
-    return <Navigate to={ROUTES.dashboard.index} state={{ from: location }} />;
+    return (
+      <Navigate to={ROUTES.dashboardRoute.index} state={{ from: location }} />
+    );
   }
 
   return children;

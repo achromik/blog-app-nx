@@ -9,7 +9,7 @@ import { NonAuthRoute } from './NonAuthRoute';
 export const Router: React.FC = () => (
   <Routes>
     <Route
-      path={ROUTES.dashboard.index}
+      path={ROUTES.dashboardRoute['*']}
       element={
         <AuthRoute>
           <Dashboard />

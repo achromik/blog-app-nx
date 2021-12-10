@@ -10,10 +10,6 @@ interface AuthRouteProps {
 export const AuthRoute: React.FC<AuthRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-  // useEffect(()-> {
-
-  // }[isAuthenticated])
-
   const location = useLocation();
 
   if (isAuthenticated) {
