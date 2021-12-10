@@ -1,10 +1,12 @@
 import Axios, { AxiosError, AxiosRequestHeaders } from 'axios';
+import { DeviceUUID } from 'device-uuid';
 
 import { api } from '../../config';
 import { refreshToken } from '../../store/auth/auth.actions';
 import { logOut } from '../../store/auth/auth.slice';
 import { store } from '../../store/store';
 import { TokenService } from '../token';
+import { Header } from '@libs/types';
 
 export enum HttpMethod {
   GET = 'get',
@@ -22,11 +24,14 @@ export const axios = Axios.create({
   baseURL: api.baseURL,
 });
 
-const getHeaders = (): AxiosRequestHeaders => {
+const getHeaders = (url: string): AxiosRequestHeaders => {
   const token = TokenService.getAccessToken();
+
+  const isAuthUrl = Object.values(api.endpoints.auth).includes(url);
   const headers = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(isAuthUrl ? { [Header.DEVICE_ID]: new DeviceUUID().get() } : {}),
   };
   return headers;
 };
@@ -47,7 +52,7 @@ const executeQuery = async <ResponseData, Body>(
       method,
       params: query,
       data: body,
-      headers: getHeaders(),
+      headers: getHeaders(url),
     })) as { data: ResponseData };
 
     return data;
@@ -65,11 +70,13 @@ const executeQuery = async <ResponseData, Body>(
   }
 };
 
-const get = <T>(url: string, query: string | undefined = undefined) =>
-  executeQuery<T, never>(HttpMethod.GET, url, query);
+const get = <ResponseData>(
+  url: string,
+  query: string | undefined = undefined
+) => executeQuery<ResponseData, never>(HttpMethod.GET, url, query);
 
-const post = <T, Body = any>(url: string, body: Body) =>
-  executeQuery<T, Body>(HttpMethod.POST, url, undefined, body);
+const post = <ResponseData, Body = unknown>(url: string, body: Body) =>
+  executeQuery<ResponseData, Body>(HttpMethod.POST, url, undefined, body);
 
 export const http = {
   get,

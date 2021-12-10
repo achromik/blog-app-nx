@@ -1,5 +1,5 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
-import { RegisterUserResponse, Status } from '@libs/types';
+import { RegisterUserResponse, ApiResponseStatus } from '@libs/types';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserFromJWT } from './interfaces/userFromJWT.interface';
@@ -16,7 +16,7 @@ export class UserController {
   ): Promise<RegisterUserResponse> {
     const user = await this.userService.getByEmail(req.user.email);
     return {
-      status: Status.SUCCESS,
+      status: ApiResponseStatus.SUCCESS,
       data: { user },
     };
   }

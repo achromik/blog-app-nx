@@ -2,7 +2,7 @@ export function types(): string {
   return 'types';
 }
 interface Response {
-  status: Status;
+  status: ApiResponseStatus;
 }
 export interface AuthResponse extends Response {
   data: AuthenticationPayload;
@@ -12,9 +12,18 @@ export interface RegisterUserResponse extends Response {
   data: UserPayload;
 }
 
-export interface LoginData {
+export interface LoginRequestPayload {
   email: string;
   password: string;
+}
+export interface RegisterUserRequestPayload
+  extends LoginRequestPayload,
+    UserPayload {
+  confirmPassword: string;
+}
+
+export interface RefreshTokenRequestPayload {
+  refreshToken: string;
 }
 
 export interface ErrorResponse {
@@ -53,6 +62,6 @@ export enum Header {
   DEVICE_ID = 'x-device-id',
 }
 
-export enum Status {
+export enum ApiResponseStatus {
   SUCCESS = 'success',
 }

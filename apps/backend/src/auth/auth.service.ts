@@ -16,7 +16,7 @@ import {
   AuthenticationPayload,
   AuthResponse,
   RegisterUserResponse,
-  Status,
+  ApiResponseStatus,
 } from '@libs/types';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { MailService } from '../mail/mail.service';
@@ -61,7 +61,7 @@ export class AuthService {
     const refreshToken = await this.createRefreshToken(user._id, deviceId);
 
     return {
-      status: Status.SUCCESS,
+      status: ApiResponseStatus.SUCCESS,
       data: this.buildResponsePayload(user, accessToken, refreshToken),
     };
   }
@@ -70,7 +70,7 @@ export class AuthService {
     await this.revokeUserRefreshToken(userId);
 
     return {
-      status: Status.SUCCESS,
+      status: ApiResponseStatus.SUCCESS,
       data: this.buildResponsePayload(null, '', ''),
     };
   }
@@ -85,7 +85,7 @@ export class AuthService {
     const refreshToken = await this.createRefreshToken(userId, deviceId);
 
     return {
-      status: Status.SUCCESS,
+      status: ApiResponseStatus.SUCCESS,
       data: this.buildResponsePayload(user, accessToken, refreshToken),
     };
   }
@@ -101,7 +101,7 @@ export class AuthService {
     await this.mailService.registrationMail(newUser, confirmToken);
 
     return {
-      status: Status.SUCCESS,
+      status: ApiResponseStatus.SUCCESS,
       data: { user: newUser },
     };
   }
@@ -117,7 +117,7 @@ export class AuthService {
     await this.userService.setStatus(email);
 
     return {
-      status: Status.SUCCESS,
+      status: ApiResponseStatus.SUCCESS,
       data: { user },
     };
   }
