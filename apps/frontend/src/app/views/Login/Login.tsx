@@ -8,11 +8,12 @@ import { logIn } from '../../store/auth/auth.actions';
 import { clearAuthError } from '../../store/auth/auth.slice';
 
 import styles from './Login.module.scss';
+import { StoreNamespace } from '../../store/types';
 
 export const Login: React.FC = () => {
   const [user, setUser] = useState({ email: '', password: '' });
 
-  const error = useAppSelector((state) => state.auth.error);
+  const error = useAppSelector((state) => state[StoreNamespace.AUTH].error);
 
   const openNotification = () => {
     notification.open({

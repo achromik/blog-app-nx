@@ -14,13 +14,13 @@ import {
 import { http } from '../../services/http';
 import { api } from '../../config';
 import { TokenService } from '../../services/token';
-import { actionTypePrefix } from '../types';
+import { ActionTypePrefix } from '../types';
 
 export const logIn = createAsyncThunk<
   Tokens,
   LoginRequestPayload,
   { rejectValue: string }
->(actionTypePrefix.AUTH_LOGIN, async ({ email, password }, thunkAPI) => {
+>(ActionTypePrefix.AUTH_LOGIN, async ({ email, password }, thunkAPI) => {
   try {
     const url = api.endpoints.auth.login;
     const {
@@ -48,7 +48,7 @@ export const refreshToken = createAsyncThunk<
   Tokens,
   undefined,
   { rejectValue: string }
->(actionTypePrefix.AUTH_REFRESH_TOKEN, async (_, thunkAPI) => {
+>(ActionTypePrefix.AUTH_REFRESH_TOKEN, async (_, thunkAPI) => {
   try {
     const url = api.endpoints.auth.refresh;
 
@@ -76,25 +76,22 @@ export const register = createAsyncThunk<
   User,
   RegisterUserRequestPayload,
   { rejectValue: string }
->(
-  actionTypePrefix.AUTH_REFRESH_TOKEN,
-  async (userRegisterPayload, thunkAPI) => {
-    try {
-      const url = api.endpoints.auth.register;
+>(ActionTypePrefix.AUTH_REGISTER, async (userRegisterPayload, thunkAPI) => {
+  try {
+    const url = api.endpoints.auth.register;
 
-      const {
-        data: { user },
-      } = await http.post<RegisterUserResponse, RegisterUserRequestPayload>(
-        url,
-        userRegisterPayload
-      );
+    const {
+      data: { user },
+    } = await http.post<RegisterUserResponse, RegisterUserRequestPayload>(
+      url,
+      userRegisterPayload
+    );
 
-      return user;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(
-        (err as AxiosError<ErrorResponse>).response?.data.message ??
-          'Unknown error'
-      );
-    }
+    return user;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(
+      (err as AxiosError<ErrorResponse>).response?.data.message ??
+        'Unknown error'
+    );
   }
-);
+});

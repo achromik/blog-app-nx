@@ -16,8 +16,12 @@ export interface AuthState extends Tokens {
   error?: string;
 }
 
-export enum actionTypePrefix {
-  AUTH_LOGIN = 'auth/login',
-  AUTH_REFRESH_TOKEN = 'auth/refreshToken',
-  AUTH_REGISTER = '/auth/register',
+export enum StoreNamespace {
+  AUTH = 'auth',
 }
+
+export const ActionTypePrefix = {
+  AUTH_LOGIN: `${StoreNamespace.AUTH}/login`,
+  AUTH_REFRESH_TOKEN: `${StoreNamespace.AUTH}/refreshToken`,
+  AUTH_REGISTER: `${StoreNamespace.AUTH}/register`,
+} as const;
