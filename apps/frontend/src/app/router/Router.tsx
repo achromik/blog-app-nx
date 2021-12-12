@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from '../config';
 import { Dashboard } from '../views/Dashboard/Dashboard';
 import { Login } from '../views/Login/Login';
+import { Register } from '../views/Register/Register';
 import { AuthRoute } from './AuthRoute';
 import { NonAuthRoute } from './NonAuthRoute';
 
@@ -21,6 +22,14 @@ export const Router: React.FC = () => (
       element={
         <NonAuthRoute>
           <Login />
+        </NonAuthRoute>
+      }
+    />
+    <Route
+      path={ROUTES.register}
+      element={
+        <NonAuthRoute>
+          <Register />
         </NonAuthRoute>
       }
     />
