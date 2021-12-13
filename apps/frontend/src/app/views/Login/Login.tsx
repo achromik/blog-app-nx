@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Row, Col, Card, Alert, notification } from 'antd';
+import { Form, Input, Button, Row, Col, Card, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -9,36 +9,30 @@ import { clearAuthError } from '../../store/auth/auth.slice';
 
 import styles from './Login.module.scss';
 import { StoreNamespace } from '../../store/types';
+import { ROUTES } from '../../config';
 
 export const Login: React.FC = () => {
   const [user, setUser] = useState({ email: '', password: '' });
 
   const error = useAppSelector((state) => state[StoreNamespace.AUTH].error);
 
-  const openNotification = () => {
-    notification.open({
-      message: 'Notification Title',
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-      className: 'custom-class',
-      style: {
-        width: 600
-      }
-    });
-  };
-
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (error) {
+      message.error({ content: error });
+    }
+  }, [error]);
 
   const onFinish = async () => {
     const { email, password } = user;
     const resultAction = await dispatch(logIn({ email, password }));
 
     if (logIn.fulfilled.match(resultAction)) {
-      navigate(state?.from?.pathname ?? '/dashboard');
+      navigate(state?.from?.pathname ?? ROUTES.dashboardRoute.index);
     }
-    // openNotification();
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,9 +88,6 @@ export const Login: React.FC = () => {
             </Form.Item>
           </Form>
         </Card>
-        {error && (
-          <Alert message="Error" description={error} type="error" showIcon />
-        )}
       </Col>
     </Row>
   );

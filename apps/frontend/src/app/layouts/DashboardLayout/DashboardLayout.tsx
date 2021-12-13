@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu } from 'antd';
 
 import styles from './dashboardLayout.module.scss';
@@ -16,8 +16,10 @@ interface Props {
 
 export const DashboardLayout: React.FC<Props> = ({ children, title }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleLogOut = () => {
+    navigate('/login');
     dispatch(logOut());
   };
 

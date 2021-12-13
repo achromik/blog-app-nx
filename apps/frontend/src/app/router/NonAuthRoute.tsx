@@ -20,7 +20,10 @@ export const NonAuthRoute: React.FC<NonAuthRouteProps> = ({ children }) => {
 
   if (isAuthenticated) {
     return (
-      <Navigate to={ROUTES.dashboardRoute.index} state={{ from: location }} />
+      <Navigate
+        to={location.state?.from?.pathname ?? ROUTES.dashboardRoute.index}
+        state={{ from: location }}
+      />
     );
   }
 
