@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 
 import { AppRoutes } from '../config';
+import { Confirm } from '../views/Confirm/Confirm';
 import { Dashboard } from '../views/Dashboard/Dashboard';
 import { Login } from '../views/Login/Login';
 import { NotFound } from '../views/NotFound/NotFound';
@@ -31,6 +32,14 @@ export const Router: React.FC = () => (
       element={
         <NonAuthRoute>
           <Registration />
+        </NonAuthRoute>
+      }
+    />
+    <Route
+      path={AppRoutes.confirm}
+      element={
+        <NonAuthRoute>
+          <Confirm />
         </NonAuthRoute>
       }
     />
