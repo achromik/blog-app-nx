@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Row, Col, Card, message } from 'antd';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Form, Row, Col, Card, message, Typography } from 'antd';
 
+import { LoginRequestPayload } from '@libs/types';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { logIn } from '../../store/auth/auth.actions';
 import { clearAuthError } from '../../store/auth/auth.slice';
-
-import styles from './Login.module.scss';
 import { StoreNamespace } from '../../store/types';
 import { AppRoutes } from '../../config';
+import { LoginForm } from '../../components/LoginForm/LoginForm';
+
+import styles from './Login.module.scss';
 
 export const Login: React.FC = () => {
-  const [user, setUser] = useState({ email: '', password: '' });
-
-  const error = useAppSelector((state) => state[StoreNamespace.AUTH].error);
+  const [form] = Form.useForm<LoginRequestPayload>();
 
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const { error } = useAppSelector((state) => state[StoreNamespace.AUTH]);
 
   useEffect(() => {
     if (error) {
@@ -26,67 +27,38 @@ export const Login: React.FC = () => {
     }
   }, [error]);
 
-  const onFinish = async () => {
-    const { email, password } = user;
-    const resultAction = await dispatch(logIn({ email, password }));
+  const onFinish = async (values: LoginRequestPayload) => {
+    const resultAction = await dispatch(logIn(values));
 
     if (logIn.fulfilled.match(resultAction)) {
       navigate(state?.from?.pathname ?? AppRoutes.dashboardRoute.index);
     }
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    error && dispatch(clearAuthError());
-    setUser((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const onChange = () => {
+    dispatch(clearAuthError());
+  };
+
+  const goToRegistrationPage = (event: React.MouseEvent) => {
+    event.preventDefault();
+    dispatch(clearAuthError());
+    navigate(AppRoutes.registration);
   };
 
   return (
     <Row className={styles.row} justify="center" align="middle">
       <Col md={6}>
         <Card title="Sign In">
-          <Form name="normal_login" className="login-form" onFinish={onFinish}>
-            <Form.Item
-              name="email"
-              rules={[{ required: true, message: 'Please input your Email!' }]}
-            >
-              <Input
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Email"
-                name="email"
-                value="user.email"
-                onChange={onChange}
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: 'Please input your Password!' }
-              ]}
-            >
-              <Input
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                name="password"
-                placeholder="Password"
-                value="user.password"
-                onChange={onChange}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className={styles.button}
-              >
-                Log in
-              </Button>
-              <Row justify="space-between">
-                <Col>
-                  Or <Link to="/register">sign up</Link> now!
-                </Col>
-              </Row>
-            </Form.Item>
-          </Form>
+          <LoginForm onFinish={onFinish} form={form} onChange={onChange} />
+          <Row justify="space-between">
+            <Typography.Text>
+              Or{' '}
+              <Link to={AppRoutes.registration} onClick={goToRegistrationPage}>
+                sign up
+              </Link>{' '}
+              now!
+            </Typography.Text>
+          </Row>
         </Card>
       </Col>
     </Row>
