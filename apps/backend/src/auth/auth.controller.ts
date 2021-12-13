@@ -69,8 +69,8 @@ export class AuthController {
   }
 
   @UseGuards(ConfirmTokenAuthGuard)
-  @Get('verify')
-  async verify(
+  @Get('confirm')
+  async confirm(
     @Request() req: RequestWithUserEmail,
     @Query('token') confirmToken: string
   ) {
