@@ -1,18 +1,17 @@
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { ROUTES } from '../config';
+import { AppRoutes } from '../config';
 import { useAppSelector } from '../hooks';
+import { StoreNamespace } from '../store/types';
 
 interface AuthRouteProps {
   children: JSX.Element;
 }
 
 export const AuthRoute: React.FC<AuthRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
-
-  // useEffect(()-> {
-
-  // }[isAuthenticated])
+  const { isAuthenticated } = useAppSelector(
+    (state) => state[StoreNamespace.AUTH]
+  );
 
   const location = useLocation();
 
@@ -20,5 +19,5 @@ export const AuthRoute: React.FC<AuthRouteProps> = ({ children }) => {
     return children;
   }
 
-  return <Navigate to={ROUTES.login} state={{ from: location }} />;
+  return <Navigate to={AppRoutes.login} state={{ from: location }} />;
 };

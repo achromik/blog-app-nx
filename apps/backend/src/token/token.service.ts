@@ -24,8 +24,8 @@ export class TokenService {
         return createdToken;
       }
 
-      // due to impossible assign into read-only prop
-      // below is hook to miss that issue
+      // Due to impossibility to reassign the read-only property,
+      // below is the hook to miss that issue
       (tokenDoc.jti as TokenDocument['jti']) = token.jti;
       (tokenDoc.iat as TokenDocument['iat']) = token.iat;
       (tokenDoc.device as TokenDocument['device']) = token.device;

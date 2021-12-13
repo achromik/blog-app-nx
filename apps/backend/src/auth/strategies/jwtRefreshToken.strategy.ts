@@ -56,8 +56,6 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
     if (!isValid) {
       this.logger.error(`Token for userId: ${userId} is invalid`);
-      console.log({ ...token });
-      console.log(userId, jti, device);
 
       throw new BadRequestException('Provided refreshToken is invalid!');
     }

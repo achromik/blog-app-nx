@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 
@@ -21,9 +21,11 @@ import { AuthModule } from '../auth/auth.module';
       imports: [MongoConfigModule],
       useFactory: async (config: MongoConfigService) => ({
         uri: `mongodb://${config.user}:${config.pass}@${config.host}:${config.port}/`,
+        dbName: config.dbName,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        useFindAndModify: false,
       }),
       inject: [MongoConfigService],
     }),
@@ -33,6 +35,6 @@ import { AuthModule } from '../auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Logger],
 })
 export class AppModule {}

@@ -2,9 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { Tokens } from '@libs/types';
 import { TokenService } from '../../services/token';
-import { AuthState } from '../../types';
+import {
+  AuthState,
+  AsyncActionStatus,
+  ActionTypePrefix,
+  StoreNamespace,
+} from '../types';
 import { isFulfilledAction, isPendingAction, isRejectedAction } from '../utils';
-import { logIn, refreshToken } from './auth.actions';
 
 const tokens: Tokens = {
   accessToken: TokenService.getAccessToken(),
@@ -12,84 +16,146 @@ const tokens: Tokens = {
 };
 
 const initialState: AuthState = {
-  status: 'idle',
+  status: AsyncActionStatus.IDLE,
   isAuthenticated: tokens.accessToken ? true : false,
+  isRegistered: false,
   ...tokens,
   error: '',
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: StoreNamespace.AUTH,
   initialState,
   reducers: {
-    clearAuthError: (state) => {
-      state.error = '';
-    },
-    logOut: (state) => {
-      state.isAuthenticated = false;
-      state.accessToken = '';
-    },
+    clearAuthError: (state) => ({
+      ...state,
+      error: '',
+    }),
+    logOut: (state) => ({
+      ...state,
+      isAuthenticated: false,
+      accessToken: '',
+    }),
+    setIsRegistered: (state, { payload }: { payload: boolean }) => ({
+      ...state,
+      isRegistered: payload,
+    }),
   },
   extraReducers: (build) => {
-    build.addMatcher(isPendingAction<never>(logIn.typePrefix), (state) => {
-      state.status = 'pending';
-    });
+    build.addMatcher(isPendingAction(ActionTypePrefix.AUTH_LOGIN), (state) => ({
+      ...state,
+      status: AsyncActionStatus.PENDING,
+      error: '',
+    }));
 
     build.addMatcher(
-      isFulfilledAction<Tokens>(logIn.typePrefix),
-      (state, { payload }) => {
-        state.status = 'resolved';
-        state.isAuthenticated = true;
-        state.accessToken = payload.accessToken;
-        state.refreshToken = payload.refreshToken;
-      }
+      isFulfilledAction<Tokens>(ActionTypePrefix.AUTH_LOGIN),
+      (state, { payload }) => ({
+        ...state,
+        status: AsyncActionStatus.FULFILLED,
+        isAuthenticated: true,
+        accessToken: payload.accessToken,
+        refreshToken: payload.refreshToken,
+      })
     );
 
     build.addMatcher(
-      isRejectedAction<string | Error>(logIn.typePrefix),
-      (state, { payload, error }) => {
-        state.status = 'resolved';
-        state.isAuthenticated = false;
-        if (typeof payload === 'string') {
-          state.error = payload;
-        }
-        if (error instanceof Error) {
-          state.error = error.message;
-        }
-      }
+      isRejectedAction<string>(ActionTypePrefix.AUTH_LOGIN),
+      (state, { payload }) => ({
+        ...state,
+        status: AsyncActionStatus.REJECTED,
+        isAuthenticated: false,
+        error: payload,
+      })
     );
 
     build.addMatcher(
-      isPendingAction<never>(refreshToken.typePrefix),
-      (state) => {
-        state.status = 'pending';
-      }
+      isPendingAction(ActionTypePrefix.AUTH_REFRESH_TOKEN),
+      (state) => ({
+        ...state,
+        status: AsyncActionStatus.PENDING,
+        error: '',
+        isAuthenticated: false,
+      })
     );
 
     build.addMatcher(
-      isFulfilledAction<Tokens>(refreshToken.typePrefix),
-      (state, { payload }) => {
-        state.status = 'resolved';
-        state.isAuthenticated = true;
-        state.accessToken = payload.accessToken;
-        state.refreshToken = payload.refreshToken;
-      }
+      isFulfilledAction<Tokens>(ActionTypePrefix.AUTH_REFRESH_TOKEN),
+      (state, { payload }) => ({
+        ...state,
+        status: AsyncActionStatus.FULFILLED,
+        isAuthenticated: true,
+        accessToken: payload.accessToken,
+        refreshToken: payload.refreshToken,
+      })
     );
 
     build.addMatcher(
-      isRejectedAction<string | Error>(refreshToken.typePrefix),
-      (state, { error }) => {
-        state.status = 'resolved';
-        state.isAuthenticated = false;
+      isRejectedAction<string>(ActionTypePrefix.AUTH_REFRESH_TOKEN),
+      (state, { payload }) => ({
+        ...state,
+        status: AsyncActionStatus.REJECTED,
+        isAuthenticated: false,
+        error: payload,
+      })
+    );
 
-        if (error instanceof Error) {
-          state.error = error.message;
-        }
-      }
+    build.addMatcher(
+      isPendingAction(ActionTypePrefix.AUTH_REGISTER),
+      (state) => ({
+        ...state,
+        status: AsyncActionStatus.PENDING,
+        error: '',
+        isRegistered: false,
+      })
+    );
+
+    build.addMatcher(
+      isFulfilledAction(ActionTypePrefix.AUTH_REGISTER),
+      (state) => ({
+        ...state,
+        status: AsyncActionStatus.FULFILLED,
+        isRegistered: true,
+      })
+    );
+
+    build.addMatcher(
+      isRejectedAction<string>(ActionTypePrefix.AUTH_REGISTER),
+      (state, { payload }) => ({
+        ...state,
+        status: AsyncActionStatus.REJECTED,
+        error: payload,
+      })
+    );
+
+    build.addMatcher(
+      isPendingAction(ActionTypePrefix.AUTH_CONFIRM),
+      (state) => ({
+        ...state,
+        status: AsyncActionStatus.PENDING,
+        error: '',
+      })
+    );
+
+    build.addMatcher(
+      isFulfilledAction(ActionTypePrefix.AUTH_CONFIRM),
+      (state) => ({
+        ...state,
+        status: AsyncActionStatus.FULFILLED,
+      })
+    );
+
+    build.addMatcher(
+      isRejectedAction<string>(ActionTypePrefix.AUTH_CONFIRM),
+      (state, { payload }) => ({
+        ...state,
+        status: AsyncActionStatus.REJECTED,
+        error: payload,
+      })
     );
   },
 });
 
-export const { clearAuthError, logOut } = authSlice.actions;
+export const { clearAuthError, logOut, setIsRegistered } = authSlice.actions;
 
 export default authSlice.reducer;

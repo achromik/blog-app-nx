@@ -12,5 +12,8 @@
   "files.associations": {
     "*.env*": "env"
   },
-  "cSpell.words": ["Appstore"]
+  "cSpell.words": ["Appstore"],
+  "thunder-client.workspaceRelativePath": ".vscode",
+  "thunder-client.showActivityFromCollection": true,
+  "thunder-client.loadFromProject": true
 }

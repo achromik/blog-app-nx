@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
-import { AppConfig } from '../interfaces/app.interface';
-import { getEnvNumber, getEnvString } from '../utils';
+import { AppConfig } from '../interfaces/appConfig.interface';
+import { getEnvNumber, getEnvString } from '@libs/utils';
 
 export default registerAs<AppConfig>(
   'app',
@@ -11,5 +11,8 @@ export default registerAs<AppConfig>(
     jwtTTL: getEnvNumber('JWT_TTL', 60),
     refreshTokenSecretKey: getEnvString('JWT_REFRESH_TOKEN_SECRET_KEY'),
     refreshTokenTTL: getEnvNumber('JWT_REFRESH_TOKEN_TTL', 120),
+    confirmTokenSecretKey: getEnvString('JWT_REFRESH_TOKEN_SECRET_KEY'),
+    confirmTokenTTL: getEnvNumber('JWT_CONFIRM_TOKEN_TTL', 24 * 60 * 60),
+    name: getEnvString('APP_NAME', process.env.npm_package_name),
   })
 );

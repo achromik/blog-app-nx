@@ -14,11 +14,14 @@ import { AppConfigService } from '../config/app/configuration.service';
 import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy';
 import { TokenService } from '../token/token.service';
 import { TokenSchema } from '../token/schemas/token.schema';
+import { MailModule } from '../mail/mail.module';
+import { JwtConfirmTokenStrategy } from './strategies/jwtConfirmToken.strategy';
 
 @Module({
   imports: [
     PassportModule,
     AppConfigModule,
+    MailModule,
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },
       { name: 'Token', schema: TokenSchema },
@@ -39,6 +42,7 @@ import { TokenSchema } from '../token/schemas/token.schema';
     LocalStrategy,
     JwtStrategy,
     JwtRefreshTokenStrategy,
+    JwtConfirmTokenStrategy,
   ],
   controllers: [AuthController],
 })

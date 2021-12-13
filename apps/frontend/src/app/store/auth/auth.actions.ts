@@ -1,23 +1,33 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { LoginData, AuthResponse, ErrorResponse, Tokens } from '@libs/types';
+import {
+  LoginRequestPayload,
+  AuthResponse,
+  ErrorResponse,
+  Tokens,
+  RefreshTokenRequestPayload,
+  RegistrationRequestPayload,
+  User,
+  RegistrationResponse,
+} from '@libs/types';
 import { http } from '../../services/http';
 import { api } from '../../config';
 import { TokenService } from '../../services/token';
+import { ActionTypePrefix } from '../types';
 
 export const logIn = createAsyncThunk<
   Tokens,
-  LoginData,
+  LoginRequestPayload,
   { rejectValue: string }
->('auth/logIn', async ({ email, password }, thunkAPI) => {
+>(ActionTypePrefix.AUTH_LOGIN, async ({ email, password }, thunkAPI) => {
   try {
     const url = api.endpoints.auth.login;
     const {
       data: {
         payload: { accessToken, refreshToken },
       },
-    } = await http.post<AuthResponse, any>(url, {
+    } = await http.post<AuthResponse, LoginRequestPayload>(url, {
       email,
       password,
     });
@@ -38,7 +48,7 @@ export const refreshToken = createAsyncThunk<
   Tokens,
   undefined,
   { rejectValue: string }
->('auth/refreshToken', async (_, thunkAPI) => {
+>(ActionTypePrefix.AUTH_REFRESH_TOKEN, async (_, thunkAPI) => {
   try {
     const url = api.endpoints.auth.refresh;
 
@@ -46,7 +56,9 @@ export const refreshToken = createAsyncThunk<
 
     const {
       data: { payload },
-    } = await http.post<any, any>(url, { refreshToken });
+    } = await http.post<AuthResponse, RefreshTokenRequestPayload>(url, {
+      refreshToken,
+    });
 
     TokenService.setAccessToken(payload.accessToken);
     TokenService.setRefreshToken(payload.refreshToken);
@@ -56,6 +68,49 @@ export const refreshToken = createAsyncThunk<
     return thunkAPI.rejectWithValue(
       (err as AxiosError<ErrorResponse>).response?.data.message ??
         'Unknown Error!'
+    );
+  }
+});
+
+export const register = createAsyncThunk<
+  User,
+  RegistrationRequestPayload,
+  { rejectValue: string }
+>(ActionTypePrefix.AUTH_REGISTER, async (userRegisterPayload, thunkAPI) => {
+  try {
+    const url = api.endpoints.auth.register;
+
+    const {
+      data: { user },
+    } = await http.post<RegistrationResponse, RegistrationRequestPayload>(
+      url,
+      userRegisterPayload
+    );
+
+    return user;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(
+      (err as AxiosError<ErrorResponse>).response?.data.message ??
+        'Unknown error'
+    );
+  }
+});
+
+export const confirm = createAsyncThunk<
+  boolean,
+  { confirmToken: string },
+  { rejectValue: string }
+>(ActionTypePrefix.AUTH_CONFIRM, async ({ confirmToken }, thunkAPI) => {
+  try {
+    const url = api.endpoints.auth.confirm;
+
+    await http.get(url, { token: confirmToken });
+
+    return true;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(
+      (err as AxiosError<ErrorResponse>).response?.data.message ??
+        'Unknown error'
     );
   }
 });

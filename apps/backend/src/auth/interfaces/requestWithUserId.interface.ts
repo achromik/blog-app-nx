@@ -1,5 +1,5 @@
 import { RefreshTokenPayload } from './refreshTokenPayload.interface';
 
-export interface RequestWithUserID extends Request {
+export interface RequestWithUserId extends Request {
   user: RefreshTokenPayload;
 }

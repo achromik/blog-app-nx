@@ -20,4 +20,8 @@ export class MongoConfigService {
   get pass(): string {
     return this.configService.get<string>('mongo.pass');
   }
+
+  get dbName(): string {
+    return this.configService.get<string>('mongo.dbName');
+  }
 }
