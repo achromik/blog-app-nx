@@ -1,4 +1,7 @@
+// @import '../../../styles.scss';
+
 .row {
+  // @include background;
   height: 100vh;
 
   :global {

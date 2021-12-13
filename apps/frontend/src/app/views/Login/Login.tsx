@@ -10,7 +10,7 @@ import { StoreNamespace } from '../../store/types';
 import { AppRoutes } from '../../config';
 import { LoginForm } from '../../components/LoginForm/LoginForm';
 
-import styles from './Login.module.scss';
+import styles from './login.module.scss';
 
 export const Login: React.FC = () => {
   const [form] = Form.useForm<LoginRequestPayload>();
