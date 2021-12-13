@@ -127,6 +127,32 @@ const authSlice = createSlice({
         error: payload,
       })
     );
+
+    build.addMatcher(
+      isPendingAction(ActionTypePrefix.AUTH_CONFIRM),
+      (state) => ({
+        ...state,
+        status: AsyncActionStatus.PENDING,
+        error: '',
+      })
+    );
+
+    build.addMatcher(
+      isFulfilledAction(ActionTypePrefix.AUTH_CONFIRM),
+      (state) => ({
+        ...state,
+        status: AsyncActionStatus.FULFILLED,
+      })
+    );
+
+    build.addMatcher(
+      isRejectedAction<string>(ActionTypePrefix.AUTH_CONFIRM),
+      (state, { payload }) => ({
+        ...state,
+        status: AsyncActionStatus.REJECTED,
+        error: payload,
+      })
+    );
   },
 });
 

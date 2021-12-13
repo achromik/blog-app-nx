@@ -95,3 +95,22 @@ export const register = createAsyncThunk<
     );
   }
 });
+
+export const confirm = createAsyncThunk<
+  boolean,
+  { confirmToken: string },
+  { rejectValue: string }
+>(ActionTypePrefix.AUTH_CONFIRM, async ({ confirmToken }, thunkAPI) => {
+  try {
+    const url = api.endpoints.auth.confirm;
+
+    await http.get(url, { token: confirmToken });
+
+    return true;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(
+      (err as AxiosError<ErrorResponse>).response?.data.message ??
+        'Unknown error'
+    );
+  }
+});

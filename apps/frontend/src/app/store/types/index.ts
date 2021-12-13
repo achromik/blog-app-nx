@@ -24,4 +24,5 @@ export const ActionTypePrefix = {
   AUTH_LOGIN: `${StoreNamespace.AUTH}/login`,
   AUTH_REFRESH_TOKEN: `${StoreNamespace.AUTH}/refreshToken`,
   AUTH_REGISTER: `${StoreNamespace.AUTH}/register`,
+  AUTH_CONFIRM: `${StoreNamespace.AUTH}/confirm`,
 } as const;
