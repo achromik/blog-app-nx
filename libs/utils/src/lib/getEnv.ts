@@ -30,4 +30,4 @@ const getEnv =
 export const getEnvString = getEnv<string>('');
 export const getEnvNumber = getEnv<number>(0);
 export const getEnvBoolean = getEnv<boolean>(false);
-export const getEnvObject = getEnv<Record<string, unknown>>(null);
+export const getEnvObject = getEnv<Record<string, unknown>>({});
