@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { ROUTES } from '../config';
+import { AppRoutes } from '../config';
 import { useAppSelector } from '../hooks';
 import { StoreNamespace } from '../store/types';
 
@@ -19,5 +19,5 @@ export const AuthRoute: React.FC<AuthRouteProps> = ({ children }) => {
     return children;
   }
 
-  return <Navigate to={ROUTES.login} state={{ from: location }} />;
+  return <Navigate to={AppRoutes.login} state={{ from: location }} />;
 };

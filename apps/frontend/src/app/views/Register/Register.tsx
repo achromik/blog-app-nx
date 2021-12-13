@@ -18,7 +18,7 @@ import { RegisterUserRequestPayload } from '@libs/types';
 import { AsyncActionStatus, StoreNamespace } from '../../store/types';
 import { clearAuthError, setIsRegistered } from '../../store/auth/auth.slice';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { ROUTES } from '../../config';
+import { AppRoutes } from '../../config';
 import { RegisterForm } from '../../components/RegisterForm/RegisterForm';
 
 export const Register: React.FC = () => {
@@ -52,7 +52,7 @@ export const Register: React.FC = () => {
           subTitle="Check your email account and confirm your email address."
           extra={
             <Link
-              to={ROUTES.login}
+              to={AppRoutes.login}
               onClick={() => dispatch(setIsRegistered(false))}
             >
               <Button type="primary">Login</Button>

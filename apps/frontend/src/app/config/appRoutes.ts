@@ -1,6 +1,7 @@
-export class ROUTES {
+export class AppRoutes {
   static login = '/login';
   static register = `/register`;
+  static confirm = '/confirm/:confirmToken';
 
   private static _dashboardRoute = (prefix = '/dashboard') => ({
     index: prefix,
@@ -9,7 +10,7 @@ export class ROUTES {
     users: '/users',
   });
 
-  static get dashboardRoute(): ReturnType<typeof ROUTES._dashboardRoute> {
+  static get dashboardRoute(): ReturnType<typeof AppRoutes._dashboardRoute> {
     return this._dashboardRoute();
   }
 }

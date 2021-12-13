@@ -9,7 +9,7 @@ import { clearAuthError } from '../../store/auth/auth.slice';
 
 import styles from './Login.module.scss';
 import { StoreNamespace } from '../../store/types';
-import { ROUTES } from '../../config';
+import { AppRoutes } from '../../config';
 
 export const Login: React.FC = () => {
   const [user, setUser] = useState({ email: '', password: '' });
@@ -31,7 +31,7 @@ export const Login: React.FC = () => {
     const resultAction = await dispatch(logIn({ email, password }));
 
     if (logIn.fulfilled.match(resultAction)) {
-      navigate(state?.from?.pathname ?? ROUTES.dashboardRoute.index);
+      navigate(state?.from?.pathname ?? AppRoutes.dashboardRoute.index);
     }
   };
 

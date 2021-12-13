@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { ROUTES } from '../config';
+import { AppRoutes } from '../config';
 import { useAppSelector } from '../hooks';
 import { StoreNamespace } from '../store/types';
 
@@ -21,7 +21,7 @@ export const NonAuthRoute: React.FC<NonAuthRouteProps> = ({ children }) => {
   if (isAuthenticated) {
     return (
       <Navigate
-        to={location.state?.from?.pathname ?? ROUTES.dashboardRoute.index}
+        to={location.state?.from?.pathname ?? AppRoutes.dashboardRoute.index}
         state={{ from: location }}
       />
     );

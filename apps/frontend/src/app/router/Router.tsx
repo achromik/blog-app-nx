@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
-import { ROUTES } from '../config';
+import { AppRoutes } from '../config';
 import { Dashboard } from '../views/Dashboard/Dashboard';
 import { Login } from '../views/Login/Login';
 import { NotFound } from '../views/NotFound/NotFound';
@@ -11,7 +11,7 @@ import { NonAuthRoute } from './NonAuthRoute';
 export const Router: React.FC = () => (
   <Routes>
     <Route
-      path={ROUTES.dashboardRoute['*']}
+      path={AppRoutes.dashboardRoute['*']}
       element={
         <AuthRoute>
           <Dashboard />
@@ -19,7 +19,7 @@ export const Router: React.FC = () => (
       }
     />
     <Route
-      path={ROUTES.login}
+      path={AppRoutes.login}
       element={
         <NonAuthRoute>
           <Login />
@@ -27,7 +27,7 @@ export const Router: React.FC = () => (
       }
     />
     <Route
-      path={ROUTES.register}
+      path={AppRoutes.register}
       element={
         <NonAuthRoute>
           <Register />

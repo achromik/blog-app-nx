@@ -6,6 +6,7 @@ export const api = {
       refresh: '/auth/refresh',
       register: '/auth/register',
       logout: '/auth/logout',
+      confirm: '/auth/confirm',
     },
     user: {
       me: '/user/me',
