@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -23,13 +24,17 @@ import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger: Logger;
+
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
     private readonly configService: AppConfigService,
     private readonly mailService: MailService
-  ) {}
+  ) {
+    this.logger = new Logger(AuthService.name);
+  }
 
   async getAuthenticatedUser(
     email: string,
@@ -116,6 +121,8 @@ export class AuthService {
 
     await this.userService.setStatus(email);
 
+    this.logger.log(`Email: ${email} successfully verified!`);
+
     return {
       status: ApiResponseStatus.SUCCESS,
       data: { user },
@@ -152,7 +159,7 @@ export class AuthService {
 
     return this.jwtService.sign(payload, {
       secret: this.configService.confirmTokenSecretKey,
-      expiresIn: this.configService.ConfirmTokenTTL,
+      expiresIn: this.configService.confirmTokenTTL,
     });
   }
 

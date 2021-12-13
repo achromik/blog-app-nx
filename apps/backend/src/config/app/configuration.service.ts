@@ -33,7 +33,7 @@ export class AppConfigService {
     return this.configService.get<string>('app.confirmTokenSecretKet');
   }
 
-  get ConfirmTokenTTL(): number {
+  get confirmTokenTTL(): number {
     return this.configService.get<number>('app.confirmTokenTTL');
   }
 

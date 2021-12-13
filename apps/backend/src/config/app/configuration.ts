@@ -12,7 +12,7 @@ export default registerAs<AppConfig>(
     refreshTokenSecretKey: getEnvString('JWT_REFRESH_TOKEN_SECRET_KEY'),
     refreshTokenTTL: getEnvNumber('JWT_REFRESH_TOKEN_TTL', 120),
     confirmTokenSecretKey: getEnvString('JWT_REFRESH_TOKEN_SECRET_KEY'),
-    confirmTokenTTL: getEnvNumber('JWT_REFRESH_TOKEN_TTL', 24 * 60 * 60),
+    confirmTokenTTL: getEnvNumber('JWT_CONFIRM_TOKEN_TTL', 24 * 60 * 60),
     name: getEnvString('APP_NAME', process.env.npm_package_name),
   })
 );
