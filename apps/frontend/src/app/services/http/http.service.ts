@@ -39,7 +39,7 @@ const getHeaders = (url: string): AxiosRequestHeaders => {
 const executeQuery = async <ResponseData, Body>(
   method: HttpMethod,
   url: string,
-  query: string | undefined,
+  query: Record<string, unknown> | undefined,
   body: Body | undefined = undefined,
   retryCount = 0
 ): Promise<ResponseData> => {
@@ -72,7 +72,7 @@ const executeQuery = async <ResponseData, Body>(
 
 const get = <ResponseData>(
   url: string,
-  query: string | undefined = undefined
+  query: Record<string, unknown> | undefined = undefined
 ) => executeQuery<ResponseData, never>(HttpMethod.GET, url, query);
 
 const post = <ResponseData, Body = unknown>(url: string, body: Body) =>
