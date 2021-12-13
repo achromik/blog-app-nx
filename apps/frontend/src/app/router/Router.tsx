@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from '../config';
 import { Dashboard } from '../views/Dashboard/Dashboard';
 import { Login } from '../views/Login/Login';
+import { NotFound } from '../views/NotFound/NotFound';
 import { Register } from '../views/Register/Register';
 import { AuthRoute } from './AuthRoute';
 import { NonAuthRoute } from './NonAuthRoute';
@@ -33,5 +34,6 @@ export const Router: React.FC = () => (
         </NonAuthRoute>
       }
     />
+    <Route path="*" element={<NotFound />} />
   </Routes>
 );
