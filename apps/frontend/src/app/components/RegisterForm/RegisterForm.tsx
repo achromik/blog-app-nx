@@ -1,4 +1,6 @@
 import { RegisterUserRequestPayload } from '@libs/types';
+import { getEmailRegexPattern } from '@libs/utils';
+
 import { Form, Input, Button, FormInstance } from 'antd';
 
 import styles from './registerForm.module.scss';
@@ -51,7 +53,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             message: 'Please input your password!'
           },
           {
-            pattern: /^((?=.*\d)(?=.*[A-Z])(?=.*\W).{8,})$/gm,
+            pattern: getEmailRegexPattern(),
             message:
               'Password should be at least 8 characters long including 1 uppercase letter, 1 special character, alphanumeric characters'
           }
@@ -61,7 +63,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         <Input.Password />
       </Form.Item>
       <Form.Item
-        name="confirm"
+        name="confirmPassword"
         label="Confirm Password"
         dependencies={['password']}
         hasFeedback
