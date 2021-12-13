@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { useContainer } from 'class-validator';
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
@@ -35,6 +36,8 @@ async function bootstrap() {
   const port = config.port;
 
   app.setGlobalPrefix(globalPrefix);
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   await app.listen(port, () => {
     logger.log(

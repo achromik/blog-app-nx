@@ -1,7 +1,10 @@
 import { IsEmail, IsOptional, Matches } from 'class-validator';
 import { getEmailRegexPattern } from '@libs/utils';
+import { Match } from '../../shared/decorators/match.decorator';
+import { UserExists } from '../../shared/decorators/userExists.decorator';
 
 export class CreateUserDTO {
+  @UserExists()
   @IsEmail()
   readonly email: string;
 
@@ -11,6 +14,7 @@ export class CreateUserDTO {
   })
   readonly password: string;
 
+  @Match<CreateUserDTO>('password')
   readonly confirmPassword: string;
 
   @IsOptional()
