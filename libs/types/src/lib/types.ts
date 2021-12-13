@@ -8,7 +8,7 @@ export interface AuthResponse extends Response {
   data: AuthenticationPayload;
 }
 
-export interface RegisterUserResponse extends Response {
+export interface RegistrationResponse extends Response {
   data: UserPayload;
 }
 
@@ -16,7 +16,7 @@ export interface LoginRequestPayload {
   email: string;
   password: string;
 }
-export interface RegisterUserRequestPayload
+export interface RegistrationRequestPayload
   extends LoginRequestPayload,
     UserPayload {
   confirmPassword: string;

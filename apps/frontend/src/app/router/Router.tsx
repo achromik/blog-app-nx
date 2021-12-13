@@ -4,7 +4,7 @@ import { AppRoutes } from '../config';
 import { Dashboard } from '../views/Dashboard/Dashboard';
 import { Login } from '../views/Login/Login';
 import { NotFound } from '../views/NotFound/NotFound';
-import { Register } from '../views/Register/Register';
+import { Registration } from '../views/Registration/Registration';
 import { AuthRoute } from './AuthRoute';
 import { NonAuthRoute } from './NonAuthRoute';
 
@@ -27,10 +27,10 @@ export const Router: React.FC = () => (
       }
     />
     <Route
-      path={AppRoutes.register}
+      path={AppRoutes.registration}
       element={
         <NonAuthRoute>
-          <Register />
+          <Registration />
         </NonAuthRoute>
       }
     />

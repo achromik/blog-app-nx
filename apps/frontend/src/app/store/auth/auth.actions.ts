@@ -7,9 +7,9 @@ import {
   ErrorResponse,
   Tokens,
   RefreshTokenRequestPayload,
-  RegisterUserRequestPayload,
+  RegistrationRequestPayload,
   User,
-  RegisterUserResponse,
+  RegistrationResponse,
 } from '@libs/types';
 import { http } from '../../services/http';
 import { api } from '../../config';
@@ -74,7 +74,7 @@ export const refreshToken = createAsyncThunk<
 
 export const register = createAsyncThunk<
   User,
-  RegisterUserRequestPayload,
+  RegistrationRequestPayload,
   { rejectValue: string }
 >(ActionTypePrefix.AUTH_REGISTER, async (userRegisterPayload, thunkAPI) => {
   try {
@@ -82,7 +82,7 @@ export const register = createAsyncThunk<
 
     const {
       data: { user },
-    } = await http.post<RegisterUserResponse, RegisterUserRequestPayload>(
+    } = await http.post<RegistrationResponse, RegistrationRequestPayload>(
       url,
       userRegisterPayload
     );

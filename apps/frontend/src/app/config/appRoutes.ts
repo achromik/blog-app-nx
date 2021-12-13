@@ -1,6 +1,6 @@
 export class AppRoutes {
   static login = '/login';
-  static register = `/register`;
+  static registration = '/registration';
   static confirm = '/confirm/:confirmToken';
 
   private static _dashboardRoute = (prefix = '/dashboard') => ({
