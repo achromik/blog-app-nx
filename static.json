@@ -1,7 +1,9 @@
 {
   "root": "dist/apps/frontend",
+
   "routes": {
-    "/**/*.html": "index.html"
+    "/assets/*": "/assets/",
+    "/**": "index.html"
   },
   "proxies": {
     "/api/": {
