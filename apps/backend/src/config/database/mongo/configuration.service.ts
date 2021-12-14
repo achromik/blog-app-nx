@@ -24,4 +24,16 @@ export class MongoConfigService {
   get dbName(): string {
     return this.configService.get<string>('mongo.dbName');
   }
+
+  get dbSrvURL(): string {
+    return this.configService.get<string>('mongo.dbSrvURL');
+  }
+
+  get databaseURL(): string {
+    const srv = this.dbSrvURL.split('@').pop();
+
+    return srv
+      ? `mongodb+srv://${this.user}:${this.pass}@${srv}/${this.dbName}?retryWrites=true&w=majority`
+      : `mongodb://${this.user}:${this.pass}@${this.host}:${this.port}/${this.dbName}?retryWrites=true&w=majority`;
+  }
 }

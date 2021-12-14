@@ -8,6 +8,7 @@ export default registerAs<MongoConfig>('mongo', (): MongoConfig => {
   const user = getEnvString('MONGODB_USERNAME');
   const pass = getEnvString('MONGODB_PASSWORD');
   const dbName = getEnvString('MONGODB_DATABASE_NAME', 'nxAppDb');
+  const dbSrvURL = getEnvString('MONGODB_SRV_URL');
 
   return {
     host,
@@ -15,6 +16,6 @@ export default registerAs<MongoConfig>('mongo', (): MongoConfig => {
     user,
     pass,
     dbName,
-    uri: `mongodb://${user}:${pass}@${host}:${port}/`,
+    dbSrvURL,
   };
 });
