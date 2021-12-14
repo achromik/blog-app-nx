@@ -17,7 +17,7 @@
     "docker:dev:stop": "docker-compose -f docker-compose.dev.yml stop",
     "docker:prod:stop:": "docker-compose stop",
     "dev": "npm run docker:dev:start && npm run docker:dev:stop",
-    "heroku-postbuild": "nx build $PROJECT_NAME --prod"
+    "heroku-postbuild": "nx run-many --target=build --projects=$PROJECT_NAME --prod"
   },
   "private": true,
   "dependencies": {
