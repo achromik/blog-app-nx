@@ -1,6 +1,8 @@
 import { Logger, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,29 +13,42 @@ import { MongoConfigModule } from '../config/database/mongo/configuration.module
 import { AppConfigModule } from '../config/app/configuration.module';
 import { AuthModule } from '../auth/auth.module';
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
-    }),
-    MongooseModule.forRootAsync({
-      imports: [MongoConfigModule],
-      useFactory: async (config: MongoConfigService) => ({
+const imports = [
+  ConfigModule.forRoot({
+    envFilePath: process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
+  }),
+  MongooseModule.forRootAsync({
+    imports: [MongoConfigModule],
+    useFactory: async (config: MongoConfigService) => {
+      console.log(config.databaseURL);
+      return {
         uri: config.databaseURL,
         dbName: config.dbName,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
         useFindAndModify: false,
-      }),
-      inject: [MongoConfigService],
-    }),
-    BlogModule,
-    UserModule,
-    AppConfigModule,
-    AuthModule,
-  ],
+      };
+    },
+    inject: [MongoConfigService],
+  }),
+  BlogModule,
+  UserModule,
+  AppConfigModule,
+  AuthModule,
+];
+
+if (process.env.NODE_ENV === 'production') {
+  imports.push(
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'frontend'),
+    })
+  );
+}
+console.log(process.env.NODE_ENV);
+
+@Module({
+  imports,
   controllers: [AppController],
   providers: [AppService, Logger],
 })

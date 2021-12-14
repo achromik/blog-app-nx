@@ -29,6 +29,7 @@
     "@nestjs/mongoose": "^8.0.1",
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^7.0.0",
+    "@nestjs/serve-static": "^2.2.2",
     "@reduxjs/toolkit": "^1.6.2",
     "antd": "^4.16.13",
     "axios": "^0.24.0",

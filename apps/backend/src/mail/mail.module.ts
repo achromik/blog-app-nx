@@ -7,8 +7,6 @@ import { MailService } from './mail.service';
 import { MailerConfigService } from '../config/mailer/configuration.service';
 import { MailerConfigModule } from '../config/mailer/configuration.module';
 
-console.log(join(__dirname, 'assets/templates'));
-
 @Module({
   imports: [
     MailerConfigModule,
