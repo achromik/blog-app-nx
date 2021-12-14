@@ -20,7 +20,7 @@ import { AuthModule } from '../auth/auth.module';
     MongooseModule.forRootAsync({
       imports: [MongoConfigModule],
       useFactory: async (config: MongoConfigService) => ({
-        uri: `mongodb://${config.user}:${config.pass}@${config.host}:${config.port}/`,
+        uri: config.databaseURL,
         dbName: config.dbName,
         useNewUrlParser: true,
         useUnifiedTopology: true,

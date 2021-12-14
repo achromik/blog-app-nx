@@ -4,5 +4,5 @@ export interface MongoConfig {
   user: string;
   pass: string;
   dbName: string;
-  uri: string;
+  dbSrvURL: string;
 }
