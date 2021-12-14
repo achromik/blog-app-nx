@@ -33,7 +33,7 @@ export class MongoConfigService {
     const srv = this.dbSrvURL.split('@').pop();
 
     return srv
-      ? `mongodb+srv://${this.user}:${this.pass}@${srv}/${this.dbName}?retryWrites=true&w=majority`
-      : `mongodb://${this.user}:${this.pass}@${this.host}:${this.port}/${this.dbName}?retryWrites=true&w=majority`;
+      ? `mongodb+srv://${this.user}:${this.pass}@${srv}`
+      : `mongodb://${this.user}:${this.pass}@${this.host}:${this.port}`;
   }
 }
