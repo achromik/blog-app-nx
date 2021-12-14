@@ -7,5 +7,7 @@ export interface AppConfig {
   refreshTokenTTL: number;
   confirmTokenSecretKey: string;
   confirmTokenTTL: number;
-  name: string;
+  appName: string;
+  appPort: number;
+  appHost: string;
 }

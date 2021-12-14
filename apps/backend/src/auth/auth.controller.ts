@@ -10,7 +10,7 @@ import {
   Get,
   Query,
 } from '@nestjs/common';
-import { AuthResponse, Header, RegisterUserResponse } from '@libs/types';
+import { AuthResponse, Header, RegistrationResponse } from '@libs/types';
 
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -64,7 +64,7 @@ export class AuthController {
   @Post('register')
   async createUser(
     @Body(new ValidationPipe()) createUserDTO: CreateUserDTO
-  ): Promise<RegisterUserResponse> {
+  ): Promise<RegistrationResponse> {
     return await this.authService.register(createUserDTO);
   }
 

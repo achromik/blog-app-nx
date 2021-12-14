@@ -17,6 +17,8 @@ import { AppConfigService } from './configuration.service';
         JWT_CONFIRM_TOKEN_TTL: Joi.number(),
         API_GLOBAL_PREFIX: Joi.string().allow(''),
         APP_NAME: Joi.string(),
+        APP_HOST: Joi.string(),
+        APP_PORT: Joi.number(),
       }),
     }),
   ],

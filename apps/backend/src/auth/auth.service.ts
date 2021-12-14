@@ -16,7 +16,7 @@ import { TokenService } from '../token/token.service';
 import {
   AuthenticationPayload,
   AuthResponse,
-  RegisterUserResponse,
+  RegistrationResponse,
   ApiResponseStatus,
 } from '@libs/types';
 import { CreateUserDTO } from './dto/create-user.dto';
@@ -95,7 +95,7 @@ export class AuthService {
     };
   }
 
-  async register(createUserDto: CreateUserDTO): Promise<RegisterUserResponse> {
+  async register(createUserDto: CreateUserDTO): Promise<RegistrationResponse> {
     const confirmToken = this.createConfirmToken(createUserDto.email);
 
     const newUser = await this.userService.create({

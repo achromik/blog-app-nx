@@ -1,5 +1,5 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
-import { RegisterUserResponse, ApiResponseStatus } from '@libs/types';
+import { RegistrationResponse, ApiResponseStatus } from '@libs/types';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserFromJWT } from './interfaces/userFromJWT.interface';
@@ -13,7 +13,7 @@ export class UserController {
   @Get('me')
   async getProfile(
     @Request() req: { user: UserFromJWT }
-  ): Promise<RegisterUserResponse> {
+  ): Promise<RegistrationResponse> {
     const user = await this.userService.getByEmail(req.user.email);
     return {
       status: ApiResponseStatus.SUCCESS,

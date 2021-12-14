@@ -20,6 +20,7 @@ export class MailService {
         context: {
           name: `${user.firstName} ${user.lastName}`,
           confirmToken,
+          appURL: this.configService.appURL,
         },
       });
 
