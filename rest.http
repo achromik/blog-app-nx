@@ -1,0 +1,62 @@
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "xaaaxsaassaaaassssaaaaasssaaas@aasaxxsaassaaaasaaaa.com",
+    "password": "1234",
+    "firstName":"alex",
+    "lastName": "test"
+}
+
+####
+# @name login
+
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+X-Device-Id: 1234-5678-7890-12345678901
+
+{
+    "email": "x@xxsa.com",
+    "password": "1234"
+}
+
+
+###
+# @name refresh
+POST http://localhost:5000/api/auth/refresh
+Content-Type: application/json
+# X-Device-Id: 1234-5678-7890-12345678901
+
+{"refreshToken":"{{login.response.body.data.payload.refreshToken}}"}
+
+
+###
+POST http://localhost:5000/api/auth/refresh
+Content-Type: application/json
+X-Device-Id: 1234-5678-7890-1234567890
+
+{"refreshToken":"{{refresh.response.body.data.payload.refreshToken}}"}
+
+###
+# @name logout
+POST http://localhost:5000/api/auth/logout
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.payload.accessToken}}
+X-Device-Id: 1234-5678-7890-12345678901
+
+{"refreshToken":"{{login.response.body.data.payload.refreshToken}}"}
+
+###
+GET http://localhost:5000/api/user/me
+Authorization: Bearer {{login.response.body.data.payload.accessToken}}
+
+
+###
+POST http://localhost:5000/api/blog/post
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.payload.accessToken}}
+
+{
+    "title": "new post with author",
+    "description": "foo bar"
+}
