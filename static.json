@@ -1,13 +1,12 @@
 {
   "root": "dist/apps/frontend",
-
   "routes": {
     "/assets/*": "/assets/",
     "/**": "index.html"
   },
   "proxies": {
     "/api/": {
-      "origin": "https://achromik-nx-app-api.herokuapp.com/api/"
+      "origin": "https://${API_HEROKU_NAME}.herokuapp.com/api/"
     }
   }
 }
