@@ -1,5 +1,6 @@
 # Monorepo deploy vercel
 name: Deploy Vercel
+
 on:
   push:
     branches: [main, staging]
@@ -13,6 +14,20 @@ jobs:
       # Checkout and install
       - name: checkout
         uses: actions/checkout@v2
+      - name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - name: Check outputs
+        run: echo ${{ steps.vars.outputs.sha_short }}
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
       - name: NPM Cache
         uses: actions/cache@v1
         with:
@@ -24,11 +39,23 @@ jobs:
         run: npm ci
       # Build and deploy
       - name: Build
-        run: npm run build
+        env:
+          VERSION: ${{ github.sha }}
+        run: NX_REACT_APP_VERSION=${{ github.ref_name }}.${{ steps.vars.outputs.sha_short }} npm run build
       - name: Deploy staging
         uses: amondnet/vercel-action@v19
         id: vercel-action-staging
-        if: github.event_name == 'pull_request'
+        if: ${{ (github.event_name == 'push') && (github.ref_name ==  'staging') }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          alias-domains: staging.achromik.com
+      - name: Deploy production preview
+        uses: amondnet/vercel-action@v19
+        id: vercel-action-prod-preview
+        if: ${{ (github.event_name == 'pull_request') && contains(github.ref, 'main') }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -37,10 +64,9 @@ jobs:
       - name: Deploy production
         uses: amondnet/vercel-action@v19
         id: vercel-action-production
-        if: github.event_name == 'push'
+        if: ${{ (github.event_name == 'push') && contains(github.ref, 'main') }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}
           vercel-project-id: ${{ secrets.PROJECT_ID }}
-          vercel-args: '--prod'
