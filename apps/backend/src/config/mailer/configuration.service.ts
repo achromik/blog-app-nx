@@ -29,18 +29,18 @@ export class MailerConfigService {
     return this.configService.get<string>('app.appName');
   }
 
-  get appHost(): string {
+  get appURL(): string {
     return this.configService.get<string>('app.appHost');
   }
 
-  get appPort(): number {
-    return this.configService.get<number>('app.appPort');
-  }
+  // get appPort(): number {
+  //   return this.configService.get<number>('app.appPort');
+  // }
 
-  get appURL(): string {
-    const port = this.appPort;
-    const host = this.appHost;
+  // get appURL(): string {
+  //   const port = this.appPort;
+  //   const host = this.appHost;
 
-    return `${host}${port ? `:${port}` : ''}`;
-  }
+  //   return `${host}${port ? `:${port}` : ''}`;
+  // }
 }
