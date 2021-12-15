@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "scope": "nx-app_scope",
+  "scope": "achromik",
   "github": {
     "enabled": false
   },
