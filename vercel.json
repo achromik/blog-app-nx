@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "scope": "nx-app_scope",
+  "github": {
+    "enabled": false
+  },
+  "builds": [
+    {
+      "src": "dist/apps/backend/main.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["dist/apps/backend/**"]
+      }
+    },
+    {
+      "src": "dist/apps/frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "dist/apps/backend/main.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/dist/apps/frontend/assets/$1"
+    },
+    {
+      "src": "/(.*).(js|css|ico)",
+      "dest": "/dist/apps/frontend/$1.$2"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/apps/frontend/index.html"
+    }
+  ]
+}
