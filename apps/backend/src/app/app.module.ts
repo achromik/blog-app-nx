@@ -13,6 +13,8 @@ import { MongoConfigModule } from '../config/database/mongo/configuration.module
 import { AppConfigModule } from '../config/app/configuration.module';
 import { AuthModule } from '../auth/auth.module';
 
+console.log(process.env);
+
 const imports = [
   ConfigModule.forRoot({
     envFilePath: process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
