@@ -19,17 +19,14 @@ const imports = [
   }),
   MongooseModule.forRootAsync({
     imports: [MongoConfigModule],
-    useFactory: async (config: MongoConfigService) => {
-      console.log(config.databaseURL);
-      return {
-        uri: config.databaseURL,
-        dbName: config.dbName,
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-      };
-    },
+    useFactory: async (config: MongoConfigService) => ({
+      uri: config.databaseURL,
+      dbName: config.dbName,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    }),
     inject: [MongoConfigService],
   }),
   BlogModule,
@@ -45,7 +42,6 @@ if (process.env.NODE_ENV === 'production') {
     })
   );
 }
-console.log(process.env.NODE_ENV);
 
 @Module({
   imports,
