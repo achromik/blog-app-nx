@@ -10,11 +10,12 @@ import { MongoConfigService } from './configuration.service';
     ConfigModule.forRoot({
       load: [configuration],
       validationSchema: Joi.object({
-        MONGODB_HOST: Joi.string().required(),
-        MONGODB_PORT: Joi.number().required(),
+        MONGODB_HOST: Joi.string(),
+        MONGODB_PORT: Joi.number(),
         MONGODB_USERNAME: Joi.string().required(),
         MONGODB_PASSWORD: Joi.string().required(),
         MONGODB_DATABASE: Joi.string().allow(null).allow('').optional(),
+        MONGODB_SRV_URL: Joi.string().allow(null).allow('').optional(),
       }),
       validationOptions: {
         allowUnknown: true,

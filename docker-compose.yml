@@ -16,16 +16,13 @@ services:
         NODE_ENV: ${NODE_ENV}
         BUILD_FLAG: --prod
     image: backend:prod
-    # ports:
-    #   - ${API_PORT:-5000}:5000
+    ports:
+      - ${API_DOCKER_PORT:-5000}:${PORT:-5000}
     volumes:
       - ./apps/backend:/app/builder/apps/backend
     env_file: ./.env
     environment:
       NODE_ENV: ${NODE_ENV}
-      MONGODB_HOST: mongo
-    depends_on:
-      - mongo
     networks:
       - corp
     restart: on-failure
@@ -42,27 +39,12 @@ services:
         BUILD_FLAG: --prod
     image: frontend:prod
     ports:
-      - ${APP_PORT:-4200}:80
+      - ${APP_DOCKER_PORT:-4200}:80
     environment:
       NODE_ENV: ${NODE_ENV}
     env_file: ./.env
     depends_on:
       - backend
-    networks:
-      - corp
-    restart: on-failure
-
-  mongo:
-    image: mongo
-    container_name: database
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
-    env_file: ./.env
-    ports:
-      - 27017:27017
-    volumes:
-      - ./database:/data/db
     networks:
       - corp
     restart: on-failure
