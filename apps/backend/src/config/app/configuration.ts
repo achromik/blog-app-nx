@@ -14,7 +14,6 @@ export default registerAs<AppConfig>(
     confirmTokenSecretKey: getEnvString('JWT_REFRESH_TOKEN_SECRET_KEY'),
     confirmTokenTTL: getEnvNumber('JWT_CONFIRM_TOKEN_TTL', 24 * 60 * 60),
     appName: getEnvString('APP_NAME', process.env.npm_package_name),
-    appHost: getEnvString('APP_HOST', 'http://localhost'),
-    appPort: getEnvNumber('APP_PORT', 4200),
+    appURL: getEnvString('APP_URL', 'http://localhost:4200'),
   })
 );

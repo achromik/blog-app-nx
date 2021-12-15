@@ -8,6 +8,5 @@ export interface AppConfig {
   confirmTokenSecretKey: string;
   confirmTokenTTL: number;
   appName: string;
-  appPort: number;
-  appHost: string;
+  appURL: string;
 }
