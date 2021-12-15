@@ -1,0 +1,8 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/backend/src",
+  "compilerOptions": {
+    "assets": [{ "include": "assets/**/*", "outDir": "dist/backend/assets" }],
+    "watchAssets": true
+  }
+}
