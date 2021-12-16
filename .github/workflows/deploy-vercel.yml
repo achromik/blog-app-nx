@@ -46,7 +46,7 @@ jobs:
       - name: Deploy staging
         uses: amondnet/vercel-action@v20
         id: vercel-action-staging-preview
-        if: ${{ (github.event_name == 'push') && (github.ref_name ==  'staging') }}
+        if: ${{ github.head_ref == 'staging' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -64,10 +64,10 @@ jobs:
           vercel-project-id: ${{ secrets.PROJECT_ID }}
           alias-domains: staging.achromik.com
 
-      - name: Deploy production preview
+      - name: Deploy pull request production preview
         uses: amondnet/vercel-action@v20
         id: vercel-action-production-preview
-        if: ${{ (github.event_name == 'pull_request') }}
+        if: ${{ github.head_ref == 'main' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
