@@ -59,6 +59,11 @@ export const Login: React.FC = () => {
               now!
             </Typography.Text>
           </Row>
+          <Row justify="center">
+            <Typography.Text>
+              {process.env.NX_REACT_APP_VERSION}
+            </Typography.Text>
+          </Row>
         </Card>
       </Col>
     </Row>

@@ -23,7 +23,6 @@ export const UserSchema = new mongoose.Schema<UserDocument>(
     },
     confirmToken: {
       type: String,
-      unique: true,
     },
   },
   {
