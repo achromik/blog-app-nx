@@ -6,26 +6,19 @@ on:
     branches: [main, staging]
   pull_request:
     branches: [main, staging]
-  create:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Checkout and install
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Branch name
+      - name: Get version
         id: vars
         run: |
           echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
           echo ::set-output name=SHA_SHORT::$(git rev-parse --short HEAD)
-
-      - name: Check outputs
-        run: |
-          echo ${{ steps.vars.outputs.SHA_SHORT }}
-          echo ${{ steps.vars.outputs.SOURCE_NAME }}
 
       - name: NPM Cache
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
@@ -43,7 +36,7 @@ jobs:
       - name: Build
         run: NX_REACT_APP_VERSION=${{ steps.vars.outputs.SOURCE_NAME }}.${{ steps.vars.outputs.SHA_SHORT }} npm run build
 
-      - name: Deploy staging
+      - name: Deploy PR staging preview
         uses: amondnet/vercel-action@v20
         id: vercel-action-staging-preview
         if: ${{ github.base_ref == 'staging' }}
@@ -56,7 +49,7 @@ jobs:
       - name: Deploy tagged staging
         uses: amondnet/vercel-action@v20
         id: vercel-action-tagged-staging
-        if: ${{ (github.event_name == 'create') && startsWith(github.ref, 'refs/tags/sv') }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -64,7 +57,7 @@ jobs:
           vercel-project-id: ${{ secrets.PROJECT_ID }}
           alias-domains: staging.achromik.com
 
-      - name: Deploy pull request production preview
+      - name: Deploy PR production preview
         uses: amondnet/vercel-action@v20
         id: vercel-action-production-preview
         if: ${{ github.base_ref == 'main' }}
@@ -77,7 +70,7 @@ jobs:
       - name: Deploy production
         uses: amondnet/vercel-action@v20
         id: vercel-action-production
-        if: ${{ (github.event_name == 'create') && startsWith(github.ref, 'refs/tags/v') }}
+        if: ${{  startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'rc') }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
