@@ -10,12 +10,13 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    outputs:
-      skipped: ''
     steps:
       - name: Exit if not tag created
+        id: skipped
         if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/v')
         run: echo '::set-output name=skipped::skipped'
+      - name: Check outputs
+        run: echo ${{steps.skipped.outputs.skipped}}
 
   deploy:
     runs-on: ubuntu-latest
