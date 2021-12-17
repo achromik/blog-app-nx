@@ -16,7 +16,7 @@ jobs:
 
       - name: Exit if not tag created
         if: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/v') }}
-        run: exit -1
+        run: exit 0
 
       - name: Get version
         id: vars
