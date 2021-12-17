@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Exit if not tag created
         if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/v')
-        run: echo ::set-output name=skipped::${'skipped'}
+        run: echo '::set-output name=skipped::skipped'
 
   deploy:
     runs-on: ubuntu-latest
