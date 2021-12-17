@@ -10,6 +10,8 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    outputs:
+      skipped: ${{ steps.skipped.outputs.skipped}}
     steps:
       - name: Exit if not tag created
         id: skipped
@@ -23,6 +25,8 @@ jobs:
     needs: check
     if: needs.check.outputs.skipped != 'skipped'
     steps:
+      - name: Check outputs
+        run: echo ${{needs.check.outputs.skipped}}
       - name: Checkout
         uses: actions/checkout@v2
 
