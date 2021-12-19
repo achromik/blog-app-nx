@@ -4,12 +4,13 @@ export const api = {
     auth: {
       login: '/auth/login',
       refresh: '/auth/refresh',
-      register: '/auth/register',
       logout: '/auth/logout',
       confirm: '/auth/confirm',
     },
-    user: {
-      me: '/user/me',
+    users: {
+      me: '/users/me',
+      register: '/users/register',
+      confirm: '/users/confirm',
     },
   },
 };

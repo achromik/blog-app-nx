@@ -36,6 +36,7 @@ async function bootstrap() {
   const port = config.port;
 
   app.setGlobalPrefix(globalPrefix);
+  // app.useGlobalPipes(new ValidationPipe());
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 

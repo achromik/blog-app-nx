@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { AppConfigService } from '../../config/app/configuration.service';
-import { UserFromJWT } from '../../user/interfaces/userFromJWT.interface';
-import { UserService } from '../../user/user.service';
+import { UserFromJWT } from '../../users/interfaces/userFromJWT.interface';
+import { UsersService } from '../../users/users.service';
 import { JwtPayload } from '../interfaces/jwtPayload.interface';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class JwtConfirmTokenStrategy extends PassportStrategy(
 
   constructor(
     private readonly configService: AppConfigService,
-    private readonly userService: UserService
+    private readonly usersService: UsersService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
@@ -28,7 +28,7 @@ export class JwtConfirmTokenStrategy extends PassportStrategy(
   async validate(payload: JwtPayload): Promise<UserFromJWT> {
     const userEmail = payload.sub;
 
-    const user = await this.userService.getByEmail(userEmail);
+    const user = await this.usersService.getByEmail(userEmail);
 
     if (!user) {
       this.logger.error(`User with email: ${userEmail} not found`);

@@ -4,8 +4,8 @@ import { Match } from '../../shared/decorators/match.decorator';
 import { UserExists } from '../../shared/decorators/userExists.decorator';
 
 export class CreateUserDTO {
-  @UserExists()
   @IsEmail()
+  @UserExists()
   readonly email: string;
 
   @Matches(getEmailRegexPattern(), {

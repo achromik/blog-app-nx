@@ -1,4 +1,4 @@
-import { UserDocument } from '../../user/interfaces/user.interface';
+import { UserDocument } from '../../users/interfaces/user.interface';
 
 export interface RequestWithUser extends Request {
   user: UserDocument;

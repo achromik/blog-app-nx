@@ -7,24 +7,18 @@ import {
   HttpCode,
   Body,
   ValidationPipe,
-  Get,
-  Query,
 } from '@nestjs/common';
-import { AuthResponse, Header, RegistrationResponse } from '@libs/types';
+import { AuthResponse, Header } from '@libs/types';
 
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RequestWithUser } from './interfaces/requestWithUser.interface';
 import { RefreshTokenAuthGuard } from './guards/refreshToken-auth.guard';
-import { ConfirmTokenAuthGuard } from './guards/confirmTokenAuth.guard';
 import { RequestWithUserId } from './interfaces/requestWithUserId.interface';
 import { DeviceIdGuard } from '../shared/guards/device.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
 import { LoginUserDTO } from './dto/login-user.dto';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { RequestWithUserEmail } from './interfaces/requestWithUserEmail.interface';
 
-// @UseGuards(DeviceIdGuard)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -59,23 +53,5 @@ export class AuthController {
     const { userId } = req.user;
 
     return this.authService.refresh(userId, deviceId);
-  }
-
-  @Post('register')
-  async createUser(
-    @Body(new ValidationPipe()) createUserDTO: CreateUserDTO
-  ): Promise<RegistrationResponse> {
-    return await this.authService.register(createUserDTO);
-  }
-
-  @UseGuards(ConfirmTokenAuthGuard)
-  @Get('confirm')
-  async confirm(
-    @Request() req: RequestWithUserEmail,
-    @Query('token') confirmToken: string
-  ) {
-    const { email } = req.user;
-
-    return await this.authService.confirmEmail(email, confirmToken);
   }
 }
