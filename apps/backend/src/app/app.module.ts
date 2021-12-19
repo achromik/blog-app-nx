@@ -7,10 +7,9 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BlogModule } from '../blog/blog.module';
-import { UserModule } from '../user/user.module';
+import { UsersModule } from '../users/users.module';
 import { MongoConfigService } from '../config/database/mongo/configuration.service';
 import { MongoConfigModule } from '../config/database/mongo/configuration.module';
-import { AppConfigModule } from '../config/app/configuration.module';
 import { AuthModule } from '../auth/auth.module';
 
 const imports = [
@@ -30,8 +29,7 @@ const imports = [
     inject: [MongoConfigService],
   }),
   BlogModule,
-  UserModule,
-  AppConfigModule,
+  UsersModule,
   AuthModule,
 ];
 

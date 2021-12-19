@@ -6,7 +6,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { UserService } from '../../user/user.service';
+import { UsersService } from '../../users/users.service';
 
 export function UserExists(validationOptions?: ValidationOptions) {
   return function (object: unknown, propertyName: string) {
@@ -23,16 +23,12 @@ export function UserExists(validationOptions?: ValidationOptions) {
 @ValidatorConstraint({ name: 'UserExists', async: true })
 @Injectable()
 export class UserExistsRule implements ValidatorConstraintInterface {
-  constructor(private userService: UserService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   async validate(value: string) {
-    try {
-      await this.userService.getByEmail(value);
-    } catch (e) {
-      return true;
-    }
+    const user = await this.usersService.getByEmail(value);
 
-    return false;
+    return !user;
   }
 
   defaultMessage(_: ValidationArguments) {

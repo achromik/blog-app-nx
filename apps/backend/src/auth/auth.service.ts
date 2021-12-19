@@ -1,37 +1,28 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 
 import { JwtPayload } from './interfaces/jwtPayload.interface';
-import { UserDocument } from '../user/interfaces/user.interface';
-import { UserService } from '../user/user.service';
+import { UserDocument } from '../users/interfaces/user.interface';
+import { UsersService } from '../users/users.service';
 import { AppConfigService } from '../config/app/configuration.service';
 import { TokenDocument } from '../token/interfaces/token.interface';
 import { TokenService } from '../token/token.service';
 import {
   AuthenticationPayload,
   AuthResponse,
-  RegistrationResponse,
   ApiResponseStatus,
 } from '@libs/types';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
   private readonly logger: Logger;
 
   constructor(
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
-    private readonly configService: AppConfigService,
-    private readonly mailService: MailService
+    private readonly configService: AppConfigService
   ) {
     this.logger = new Logger(AuthService.name);
   }
@@ -40,7 +31,7 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<UserDocument> {
-    const user = await this.userService.getByEmail(email);
+    const user = await this.usersService.getByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Provided credentials are invalid!');
@@ -81,7 +72,7 @@ export class AuthService {
   }
 
   async refresh(userId: string, deviceId: string): Promise<AuthResponse> {
-    const user = await this.userService.getById(userId);
+    const user = await this.usersService.getById(userId);
 
     const accessToken = this.createAccessToken(user);
 
@@ -92,40 +83,6 @@ export class AuthService {
     return {
       status: ApiResponseStatus.SUCCESS,
       data: this.buildResponsePayload(user, accessToken, refreshToken),
-    };
-  }
-
-  async register(createUserDto: CreateUserDTO): Promise<RegistrationResponse> {
-    const confirmToken = this.createConfirmToken(createUserDto.email);
-
-    const newUser = await this.userService.create({
-      ...createUserDto,
-      confirmToken,
-    });
-
-    await this.mailService.registrationMail(newUser, confirmToken);
-
-    return {
-      status: ApiResponseStatus.SUCCESS,
-      data: { user: newUser },
-    };
-  }
-
-  async confirmEmail(email: string, confirmToken: string) {
-    const user = await this.userService.getByEmail(email);
-    const isValidConfirmToken = user.checkConfirmToken(confirmToken);
-
-    if (!isValidConfirmToken) {
-      throw new BadRequestException('Invalid confirm token!');
-    }
-
-    await this.userService.setStatus(email);
-
-    this.logger.log(`Email: ${email} successfully verified!`);
-
-    return {
-      status: ApiResponseStatus.SUCCESS,
-      data: { user },
     };
   }
 
@@ -152,15 +109,6 @@ export class AuthService {
     });
 
     return refreshToken;
-  }
-
-  private createConfirmToken(userEmail: string): string {
-    const payload = { sub: userEmail };
-
-    return this.jwtService.sign(payload, {
-      secret: this.configService.confirmTokenSecretKey,
-      expiresIn: this.configService.confirmTokenTTL,
-    });
   }
 
   private createAccessToken(user: UserDocument): string {

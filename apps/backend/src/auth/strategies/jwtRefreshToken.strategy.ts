@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Header } from '@libs/types';
 import { AppConfigService } from '../../config/app/configuration.service';
 import { TokenService } from '../../token/token.service';
-import { UserService } from '../../user/user.service';
+import { UsersService } from '../../users/users.service';
 import { RefreshTokenPayload } from '../interfaces/refreshTokenPayload.interface';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
   constructor(
     configService: AppConfigService,
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly tokenService: TokenService
   ) {
     super({
@@ -36,7 +36,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
     const device = req.headers[Header.DEVICE_ID];
 
-    const user = await this.userService.getById(userId);
+    const user = await this.usersService.getById(userId);
 
     if (!user) {
       this.logger.error(`User with id: ${userId} not found`);

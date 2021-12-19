@@ -10,7 +10,7 @@ export const Me: React.FC = () => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await http.get<any>('user/me');
+        const res = await http.get<any>('users/me');
 
         setUser(res);
       } catch (err) {

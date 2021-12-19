@@ -5,8 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { UserSchema } from '../user/schemas/user.schema';
-import { UserService } from '../user/user.service';
+import { UserSchema } from '../users/schemas/user.schema';
+import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AppConfigModule } from '../config/app/configuration.module';
@@ -14,14 +14,14 @@ import { AppConfigService } from '../config/app/configuration.service';
 import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy';
 import { TokenService } from '../token/token.service';
 import { TokenSchema } from '../token/schemas/token.schema';
-import { MailModule } from '../mail/mail.module';
 import { JwtConfirmTokenStrategy } from './strategies/jwtConfirmToken.strategy';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     PassportModule,
     AppConfigModule,
-    MailModule,
+    UsersModule,
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },
       { name: 'Token', schema: TokenSchema },
@@ -37,7 +37,7 @@ import { JwtConfirmTokenStrategy } from './strategies/jwtConfirmToken.strategy';
   ],
   providers: [
     AuthService,
-    UserService,
+    UsersService,
     TokenService,
     LocalStrategy,
     JwtStrategy,
@@ -45,5 +45,6 @@ import { JwtConfirmTokenStrategy } from './strategies/jwtConfirmToken.strategy';
     JwtConfirmTokenStrategy,
   ],
   controllers: [AuthController],
+  exports: [AppConfigModule],
 })
 export class AuthModule {}

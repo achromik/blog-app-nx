@@ -75,7 +75,6 @@ const authSlice = createSlice({
         ...state,
         status: AsyncActionStatus.PENDING,
         error: '',
-        isAuthenticated: false,
       })
     );
 

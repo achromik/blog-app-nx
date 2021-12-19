@@ -78,7 +78,7 @@ export const register = createAsyncThunk<
   { rejectValue: string }
 >(ActionTypePrefix.AUTH_REGISTER, async (userRegisterPayload, thunkAPI) => {
   try {
-    const url = api.endpoints.auth.register;
+    const url = api.endpoints.users.register;
 
     const {
       data: { user },
@@ -102,7 +102,7 @@ export const confirm = createAsyncThunk<
   { rejectValue: string }
 >(ActionTypePrefix.AUTH_CONFIRM, async ({ confirmToken }, thunkAPI) => {
   try {
-    const url = api.endpoints.auth.confirm;
+    const url = api.endpoints.users.confirm;
 
     await http.get(url, { token: confirmToken });
 
